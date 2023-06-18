@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "830263780635",
+    "project_id": "clinicmax-ed3d1",
+    "storage_bucket": "clinicmax-ed3d1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:830263780635:android:88f385517f96cf01e51fbe",
+        "android_client_info": {
+          "package_name": "com.clinic_max.app.clinic_max"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "830263780635-13e8ogd28q62e0nsei2gpna3mcn7luav.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.clinic_max.app.clinic_max",
+            "certificate_hash": "9f632a8fbff7177151520ee62e68e615625c8cd4"
+          }
+        },
+        {
+          "client_id": "830263780635-vpbftbe2if5dvkjvv8fiv74e67ff9534.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA17wgKgFef3qHiH5f03p4GwpfIpRvckjY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "830263780635-c1ne5b3lnhltbgkh7r06o20ufphqqjfc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "830263780635-8c5go9krana4h4k3864ra8jr9s8i9epd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.clinicmax.app.clinicMax"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:830263780635:android:ccad71f775ba2b4ae51fbe",
+        "android_client_info": {
+          "package_name": "com.jzming.clinicmax"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "830263780635-g7maj16mrhvqlvu36j1kvque3jsngvqd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jzming.clinicmax",
+            "certificate_hash": "0f7dada6ac0c20eda1020f8968e82475e3ee3645"
+          }
+        },
+        {
+          "client_id": "830263780635-vpbftbe2if5dvkjvv8fiv74e67ff9534.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA17wgKgFef3qHiH5f03p4GwpfIpRvckjY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "830263780635-c1ne5b3lnhltbgkh7r06o20ufphqqjfc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "830263780635-8c5go9krana4h4k3864ra8jr9s8i9epd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.clinicmax.app.clinicMax"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

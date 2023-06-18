@@ -1,0 +1,48 @@
+name: clinic_max
+version: 1.0.0+1
+publish_to: none
+description: A new Flutter project.
+environment:
+  sdk: ">=2.19.6 <3.0.0"
+
+dependencies:
+  awesome_dialog: ^3.1.0
+  calendar_timeline: ^1.1.2
+  cupertino_icons: ^1.0.2
+  dartz: ^0.10.1
+  email_validator: ^2.1.17
+  equatable: ^2.0.5
+  firebase_auth: ^4.6.3
+  firebase_core: ^2.14.0
+  flutter:
+    sdk: flutter
+  flutter_easyloading: ^3.0.5
+  flutter_screenutil: ^5.6.1
+  flutter_svg: ^2.0.0
+  fluttertoast: ^8.2.2
+  get: 4.6.5
+  google_sign_in: ^6.1.4
+  image_picker: ^0.8.9
+  intl: ^0.18.1
+  loading_animation_widget: ^1.2.0+4
+  mobile_scanner: ^3.2.0
+  path: ^1.8.0
+  path_provider: ^2.0.15
+  persistent_bottom_nav_bar: ^5.0.2
+  shared_preferences: ^2.1.2
+  supabase_flutter: ^1.10.3
+  zoom_tap_animation: ^1.1.0
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/font/Inter.ttf
+  assets:
+    - assets/images/

@@ -1,0 +1,54 @@
+import 'package:equatable/equatable.dart';
+
+class AppointmentModel extends Equatable {
+  final int id;
+  final int clinicId;
+  final String email;
+  final String appointmentDate;
+  final String appointmentTime;
+  final bool isFromKiosk;
+  final int userId;
+
+  AppointmentModel({
+    required this.id,
+    required this.clinicId,
+    required this.email,
+    required this.appointmentDate,
+    required this.appointmentTime,
+    required this.isFromKiosk,
+    required this.userId,
+  });
+
+  factory AppointmentModel.fromJson(Map<String, dynamic> json) {
+    return AppointmentModel(
+      id: json['id'],
+      clinicId: json['clinic_id'],
+      email: json['email'],
+      appointmentDate: json['appointment_date'],
+      appointmentTime: json['appointment_time'],
+      isFromKiosk: json['is_from_kiosk'],
+      userId: json['user_id'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'clinic_id': clinicId,
+      'email': email,
+      'appointment_date': appointmentDate,
+      'appointment_time': appointmentTime,
+      'user_id': userId,
+    };
+  }
+
+  @override
+  List<Object?> get props => [
+        id,
+        clinicId,
+        email,
+        appointmentDate,
+        appointmentTime,
+        isFromKiosk,
+        userId,
+      ];
+}
