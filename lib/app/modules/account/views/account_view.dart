@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
 import '../controllers/account_controller.dart';
@@ -57,22 +58,83 @@ class AccountView extends StatelessWidget {
                 SizedBox(
                   height: 62.h,
                 ),
-                Container(
-                  width: 130.w,
-                  height: 130.w,
-                  decoration: BoxDecoration(
-                    color: ColorConstant.primaryColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
-                    child: controller.userModel.value.imageUrl == '' ||
-                            controller.userModel.value.imageUrl == null
-                        ? Icon(Icons.people)
-                        : Image.network(
-                            controller.userModel.value.imageUrl!,
-                            fit: BoxFit.cover,
-                          ),
+                ZoomTapAnimation(
+                  onTap: () async {
+                    await showModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return Container(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Text(
+                                    'Select your profile picture',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                ZoomTapAnimation(
+                                  onTap: () async {
+                                    final picker = await ImagePicker();
+                                    final image = await picker.pickImage(
+                                      source: ImageSource.gallery,
+                                    );
+                                    if (image != null) {
+                                      await controller.setImage(image);
+                                    }
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Text('From Galery'),
+                                  ),
+                                ),
+                                const Divider(),
+                                ZoomTapAnimation(
+                                  onTap: () async {
+                                    final picker = await ImagePicker();
+                                    final image = await picker.pickImage(
+                                      source: ImageSource.camera,
+                                    );
+                                    if (image != null) {
+                                      await controller.setImage(image);
+                                    }
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Text('From Camera'),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+                            ),
+                          );
+                        });
+                  },
+                  child: Container(
+                    width: 130.w,
+                    height: 130.w,
+                    decoration: BoxDecoration(
+                      color: ColorConstant.primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: controller.userModel.value.imageUrl == '' ||
+                              controller.userModel.value.imageUrl == null
+                          ? Icon(Icons.people)
+                          : Image.network(
+                              controller.userModel.value.imageUrl!,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
                   ),
                 ),
                 SizedBox(height: 16.h),
@@ -181,7 +243,9 @@ class AccountView extends StatelessWidget {
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () async{
+            await controller.updateUser();
+          },
           child: Text('Update'),
         ),
       ),
