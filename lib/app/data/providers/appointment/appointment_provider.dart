@@ -1,6 +1,7 @@
 import 'package:clinic_max/app/data/config/app_config.dart';
 import 'package:clinic_max/app/data/constant/app_constant.dart';
 import 'package:clinic_max/app/data/models/appointment/appointment_model.dart';
+import 'package:clinic_max/app/data/models/users/users_model.dart';
 import 'package:intl/intl.dart';
 
 class AppointmentProvider {
@@ -92,6 +93,8 @@ class AppointmentProvider {
   static Future<List<dynamic>> getListAppointment(
     String email,
   ) async {
+    final dateNow = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final timeNow = DateFormat('HH:mm:ss').format(DateTime.now());
     List<dynamic> data = [];
     final supabase = AppConfig.supabase.client;
     final response = await supabase
@@ -99,11 +102,54 @@ class AppointmentProvider {
         .select('*, clinics(address,contact), users(name)')
         .eq('email', email)
         .eq('is_from_kiosk', false)
-        .is_('checkin_time', null);
+        .is_('checkin_time', null)
+        .gte('appointment_date', dateNow)
+        .gte('appointment_time', timeNow);
 
     if (response.length > 0) {
       data = response;
     }
     return data;
+  }
+
+  static Future<AppointmentModel?> getCurrentAppointment(
+    UsersModel user,
+  ) async {
+    AppointmentModel? appointmentModel;
+    final supabase = AppConfig.supabase.client;
+    final timeNow = DateFormat('HH:mm:ss').format(DateTime.now());
+    final response = await supabase
+        .from(AppConstant.tableAppointment)
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('email', user.email)
+        .eq('appointment_date', DateFormat('yyyy-MM-dd').format(DateTime.now()))
+        .eq('is_from_kiosk', false)
+        .is_('checkin_time', null);
+
+    if (response.length > 0) {
+      appointmentModel = AppointmentModel.fromJson(response[0]);
+    }
+
+    return appointmentModel;
+  }
+
+  static Future<bool> updateCheckinTime(int id) async {
+    final supabase = AppConfig.supabase.client;
+
+    final response = await supabase
+        .from(AppConstant.tableAppointment)
+        .update({
+          'checkin_time': DateTime.now(),
+          'queue_status':'Active',
+        })
+        .eq('id', id)
+        .select();
+
+    if (response.length > 0) {
+      return true;
+    }
+
+    return false;
   }
 }

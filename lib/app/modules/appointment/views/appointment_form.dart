@@ -96,7 +96,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                             : 0)),
                 lastDate: DateTime.now().add(const Duration(days: 365)),
                 onDateSelected: (date) =>
-                    appointmentController.selectedDateTime(date),
+                    appointmentController.setSelectedDate(date),
                 leftMargin: 2,
                 monthColor: Colors.blueGrey,
                 dayColor: ColorConstant.primaryColor,
@@ -146,7 +146,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                 child: Container(
                                   child: Text(
                                     appointmentController
-                                        .selectedStates.value.name,
+                                                .selectedStates.value.name ==
+                                            ''
+                                        ? 'States'
+                                        : appointmentController
+                                            .selectedStates.value.name,
                                     style: TextStyle(
                                       overflow: TextOverflow.ellipsis,
                                       fontSize: 16.sp,
@@ -196,10 +200,12 @@ class _AppointmentFormState extends State<AppointmentForm> {
                               Expanded(
                                 child: Container(
                                   child: Text(
-                                    appointmentController.listClinic.isNotEmpty
+                                    appointmentController
+                                                .selectedClinic.value.name !=
+                                            ''
                                         ? appointmentController
                                             .selectedClinic.value.name
-                                        : '',
+                                        : 'Clinic',
                                     style: TextStyle(
                                       overflow: TextOverflow.ellipsis,
                                       fontSize: 16.sp,
@@ -247,13 +253,21 @@ class _AppointmentFormState extends State<AppointmentForm> {
                         itemBuilder: (context, index) {
                           final data = appointmentController
                               .timeSlots.value.slots[index];
+                          final isDisabled =
+                              int.parse(data.time.replaceAll(':', '')) <=
+                                      int.parse(DateFormat('HH:mm')
+                                          .format(DateTime.now())
+                                          .replaceAll(':', '')) &&
+                                  DateTime.now().compareTo(appointmentController
+                                          .selectedDateTime.value) >=
+                                      0;
 
                           return Obx(() {
                             final booked = appointmentController.bookedSlotList
                                 .contains(data.time);
                             return ZoomTapAnimation(
                               onTap: () {
-                                if (!booked) {
+                                if (!booked && !isDisabled) {
                                   appointmentController
                                       .setSelectedTime('${data.time}');
                                 }
@@ -264,7 +278,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                               .selectedTime.value ==
                                           '${data.time}'
                                       ? Colors.amber
-                                      : booked
+                                      : booked || isDisabled
                                           ? ColorConstant.blueShade
                                           : ColorConstant.primaryColor,
                                   borderRadius: BorderRadius.circular(8),
@@ -321,13 +335,22 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                   int.parse(element.time.split(':')[0]) >= 12)
                               .toList()[index];
 
+                          final isDisabled =
+                              int.parse(data.time.replaceAll(':', '')) <=
+                                      int.parse(DateFormat('HH:mm')
+                                          .format(DateTime.now())
+                                          .replaceAll(':', '')) &&
+                                  DateTime.now().compareTo(appointmentController
+                                          .selectedDateTime.value) >=
+                                      0;
+
                           return Obx(() {
                             final booked = appointmentController.bookedSlotList
                                 .contains(data.time);
 
                             return ZoomTapAnimation(
                               onTap: () {
-                                if (!booked) {
+                                if (!booked && !isDisabled) {
                                   appointmentController
                                       .setSelectedTime('${data.time}');
                                 }
@@ -338,7 +361,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                               .selectedTime.value ==
                                           '${data.time}'
                                       ? Colors.amber
-                                      : booked
+                                      : booked || isDisabled
                                           ? ColorConstant.blueShade
                                           : ColorConstant.primaryColor,
                                   borderRadius: BorderRadius.circular(8),
@@ -367,65 +390,70 @@ class _AppointmentFormState extends State<AppointmentForm> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-        child: ElevatedButton(
-          style:
-              ElevatedButton.styleFrom(backgroundColor: ColorConstant.darkBlue),
-          onPressed: () async {
-            await AwesomeDialog(
-                context: context,
-                dialogType: DialogType.info,
-                btnOk: ElevatedButton(
-                  onPressed: () async{
-                    Get.back();
-                    await appointmentController.createAppointment();
-                  },
-                  child: Text('Yes'),
-                ),
-                btnCancel: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                  ),
-                  onPressed: () {
-                    Get.back();
-                  },
-                  child: Text('No'),
-                ),
-                body: Container(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Confirm Booking?',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: ColorConstant.primaryColor,
+      bottomNavigationBar: Obx(() {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: ColorConstant.darkBlue),
+            onPressed: appointmentController.selectedTime.value == '' ||
+                    appointmentController.selectedClinic.value.id == 0 ||
+                    appointmentController.selectedStates.value.id == 0
+                ? null
+                : () async {
+                    await AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.info,
+                        btnOk: ElevatedButton(
+                          onPressed: () async {
+                            Get.back();
+                            await appointmentController.createAppointment();
+                          },
+                          child: Text('Yes'),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                          'Date : ${DateFormat('dd-MM-yyyy').format(appointmentController.selectedDateTime.value)}'),
-                      const Divider(),
-                      Text(
-                          'Time : ${appointmentController.selectedTime.value}'),
-                      const Divider(),
-                      Text(
-                          'Clinic Name : ${appointmentController.selectedClinic.value.name}'),
-                      const Divider(),
-                      Text(
-                          'Patient Name : ${!appointmentController.isForOther.value ? appointmentController.userModel.value.name : appointmentController.otherUser.value.name}'),
-                    ],
-                  ),
-                )).show();
-            
-          },
-          child: Text('Save Appointment'),
-        ),
-      ),
+                        btnCancel: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          onPressed: () {
+                            Get.back();
+                          },
+                          child: Text('No'),
+                        ),
+                        body: Container(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Confirm Booking?',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: ColorConstant.primaryColor,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                  'Date : ${DateFormat('dd-MM-yyyy').format(appointmentController.selectedDateTime.value)}'),
+                              const Divider(),
+                              Text(
+                                  'Time : ${appointmentController.selectedTime.value}'),
+                              const Divider(),
+                              Text(
+                                  'Clinic Name : ${appointmentController.selectedClinic.value.name}'),
+                              const Divider(),
+                              Text(
+                                  'Patient Name : ${!appointmentController.isForOther.value ? appointmentController.userModel.value.name : appointmentController.otherUser.value.name}'),
+                            ],
+                          ),
+                        )).show();
+                  },
+            child: Text('Save Appointment'),
+          ),
+        );
+      }),
     );
   }
 }

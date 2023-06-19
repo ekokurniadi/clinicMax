@@ -3,7 +3,6 @@ import 'package:clinic_max/app/data/constant/color_constant.dart';
 import 'package:clinic_max/app/modules/account/views/account_view.dart';
 import 'package:clinic_max/app/modules/home/views/home_view.dart';
 import 'package:clinic_max/app/modules/medical.record/views/medical_record_view.dart';
-import 'package:clinic_max/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -57,7 +56,7 @@ class MainMenuView extends GetView<MainMenuController> {
         child: FloatingActionButton(
           backgroundColor: ColorConstant.white,
           onPressed: () async{
-            await controller.logout();
+            
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),

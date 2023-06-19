@@ -56,7 +56,7 @@ class AccountView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 62.h,
+                  height: 32.h,
                 ),
                 ZoomTapAnimation(
                   onTap: () async {
@@ -233,21 +233,29 @@ class AccountView extends StatelessWidget {
                   },
                   icon: Icons.man,
                   label: 'Gender',
-                  inputController: controller.dobController.value,
+                  inputController: controller.genderController.value,
                 ),
+                const SizedBox(height: 16),
+                const Divider(),
+                const SizedBox(height: 16),
+
+                Container(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red
+                    ),
+                    onPressed: () async {
+                      await controller.updateUser();
+                    },
+                    child: Text('Update'),
+                  ),
+                ),
+                const SizedBox(height: 16),
               ],
             ),
           );
         }),
-      ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(16),
-        child: ElevatedButton(
-          onPressed: () async{
-            await controller.updateUser();
-          },
-          child: Text('Update'),
-        ),
       ),
     );
   }
@@ -288,6 +296,7 @@ class FormInputAccount extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: TextFormField(
+                  cursorColor: Colors.white,
                   readOnly: readOnly,
                   controller: inputController,
                   onTap: onTap,

@@ -24,7 +24,13 @@ class AccountController extends GetxController {
   final imageFile = File('').obs;
   @override
   Future<void> onInit() async {
-    await getUserFromRemote();
+    try {
+      LoadingApp.show();
+      await getUserFromRemote();
+      LoadingApp.dismiss();
+    } catch (e) {
+      LoadingApp.dismiss();
+    }
     super.onInit();
   }
 
@@ -44,6 +50,14 @@ class AccountController extends GetxController {
 
     if (response != null) {
       userModel.value = response;
+
+      nameController.value.text = userModel.value.name ?? '';
+      emailController.value.text = userModel.value.email ?? '';
+      phoneController.value.text = userModel.value.phone ?? '';
+      icNumberController.value.text = userModel.value.icNumber ?? '';
+      addressController.value.text = userModel.value.address ?? '';
+      dobController.value.text = userModel.value.dob ?? '';
+      genderController.value.text = userModel.value.gender ?? '';
     }
   }
 

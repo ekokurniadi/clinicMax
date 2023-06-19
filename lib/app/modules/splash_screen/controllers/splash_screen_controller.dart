@@ -1,4 +1,3 @@
-import 'package:clinic_max/app/data/config/app_config.dart';
 import 'package:clinic_max/app/data/models/users/users_model.dart';
 import 'package:clinic_max/app/data/utils/sessions/session.dart';
 import 'package:clinic_max/app/routes/app_pages.dart';

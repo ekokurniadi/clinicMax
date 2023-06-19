@@ -67,6 +67,27 @@ class Authentication {
       } else if (e.code.contains("already")) {
         Toast.showErrorToast('Please use your Google Account to Login');
       }
+
+      try {
+        final credentials = await auth.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+
+        user = credentials.user;
+
+        Toast.showSuccessToast('Login Succes');
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'account-exists-with-different-credential') {
+          Toast.showErrorToast('Please use your Google Account to Login');
+        } else if (e.code == 'invalid-credential') {
+          Toast.showErrorToast(e.code);
+        } else if (e.code.contains("already")) {
+          Toast.showErrorToast('Please use your Google Account to Login');
+        }
+      } catch (e) {
+        Toast.showErrorToast(e.toString());
+      }
     } catch (e) {
       Toast.showErrorToast(e.toString());
     }

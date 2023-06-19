@@ -8,6 +8,7 @@ class AppointmentModel extends Equatable {
   final String appointmentTime;
   final bool isFromKiosk;
   final int userId;
+  final int queueNumber;
 
   AppointmentModel({
     required this.id,
@@ -17,6 +18,7 @@ class AppointmentModel extends Equatable {
     required this.appointmentTime,
     required this.isFromKiosk,
     required this.userId,
+    required this.queueNumber,
   });
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class AppointmentModel extends Equatable {
       appointmentTime: json['appointment_time'],
       isFromKiosk: json['is_from_kiosk'],
       userId: json['user_id'],
+      queueNumber: json['queue_number'],
     );
   }
 
@@ -38,6 +41,7 @@ class AppointmentModel extends Equatable {
       'appointment_date': appointmentDate,
       'appointment_time': appointmentTime,
       'user_id': userId,
+      'queue_number': queueNumber,
     };
   }
 
@@ -50,5 +54,6 @@ class AppointmentModel extends Equatable {
         appointmentTime,
         isFromKiosk,
         userId,
+        queueNumber,
       ];
 }

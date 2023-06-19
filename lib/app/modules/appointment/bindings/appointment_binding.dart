@@ -7,6 +7,7 @@ class AppointmentBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<AppointmentController>(
       () => AppointmentController(),
+      
     );
   }
 }

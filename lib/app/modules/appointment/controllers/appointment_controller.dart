@@ -65,7 +65,7 @@ class AppointmentController extends GetxController {
     LoadingApp.show();
     final states = await StateProvider.getDataState();
     listStates.value = states;
-    selectedStates.value = listStates.first;
+
     LoadingApp.dismiss();
   }
 
@@ -94,11 +94,16 @@ class AppointmentController extends GetxController {
 
   void setSelectedStates(StatesModel model) async {
     selectedStates.value = model;
+    selectedClinic.value = ClinicModel.initial();
+    selectedTime.value = '';
     await getClinics(selectedStates.value.id);
   }
 
-  void setSelectedDate(DateTime date) {
+  void setSelectedDate(DateTime date) async {
     selectedDateTime.value = date;
+    if (selectedStates.value.id != 0 && selectedClinic.value.id != 0) {
+      await getTimeSlot();
+    }
   }
 
   Future<void> getTimeSlot() async {
@@ -114,6 +119,7 @@ class AppointmentController extends GetxController {
     }
     bookedSlotList.value = booked;
     timeSlots.value = slot;
+    selectedTime.value = '';
     LoadingApp.dismiss();
   }
 
@@ -128,11 +134,15 @@ class AppointmentController extends GetxController {
   }
 
   void setSelectedTime(String time) {
-    selectedTime.value = time;
+    if (selectedTime.value == time) {
+      selectedTime.value = '';
+    } else {
+      selectedTime.value = time;
+    }
   }
 
   Future<void> createAppointment() async {
-    if (selectedTime != '' &&
+    if (selectedTime.value != '' &&
         selectedClinic.value.id != 0 &&
         selectedStates.value.id != 0) {
       LoadingApp.show();
@@ -160,6 +170,8 @@ class AppointmentController extends GetxController {
                 DateFormat('yyyy-MM-dd').format(selectedDateTime.value),
             appointmentTime: selectedTime.value,
             isFromKiosk: false,
+            queueNumber: timeSlots.value.slots
+                .indexWhere((element) => element.time == selectedTime.value, 1),
           ),
         );
 
@@ -185,6 +197,8 @@ class AppointmentController extends GetxController {
                 DateFormat('yyyy-MM-dd').format(selectedDateTime.value),
             appointmentTime: selectedTime.value,
             isFromKiosk: false,
+            queueNumber: timeSlots.value.slots
+                .indexWhere((element) => element.time == selectedTime.value, 1),
           ),
         );
 
@@ -194,7 +208,6 @@ class AppointmentController extends GetxController {
           refresh();
           Get.delete<AppointmentController>();
           Get.toNamed(Routes.MAIN_MENU);
-              
         } else {
           refresh();
           LoadingApp.dismiss();
@@ -217,6 +230,6 @@ class AppointmentController extends GetxController {
     emailController.value.clear();
     icNumberController.value.clear();
 
-    Get.to(() => AppointmentForm());
+    Get.toNamed(Routes.APPOINTMENT_FORM);
   }
 }

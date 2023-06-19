@@ -1,4 +1,3 @@
-import 'package:clinic_max/app/data/models/appointment/appointment_model.dart';
 import 'package:clinic_max/app/data/providers/appointment/appointment_provider.dart';
 import 'package:clinic_max/app/data/utils/sessions/session.dart';
 import 'package:clinic_max/app/data/utils/widgets/loading.dart';

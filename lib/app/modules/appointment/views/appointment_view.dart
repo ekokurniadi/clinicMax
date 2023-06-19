@@ -1,5 +1,6 @@
 import 'package:clinic_max/app/data/constant/color_constant.dart';
 import 'package:clinic_max/app/modules/appointment/views/appointment_form.dart';
+import 'package:clinic_max/app/routes/app_pages.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,7 +14,7 @@ class AppointmentView extends GetView<AppointmentController> {
   const AppointmentView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-     final _formKey = GlobalKey<FormState>();
+    final _formKey = GlobalKey<FormState>();
     return Scaffold(
       backgroundColor: ColorConstant.primaryColor,
       appBar: AppBar(
@@ -51,9 +52,7 @@ class AppointmentView extends GetView<AppointmentController> {
               ZoomTapAnimation(
                 onTap: () {
                   controller.isForOther.value = false;
-                  Get.to(
-                    () => AppointmentForm(),
-                  );
+                  Get.toNamed(Routes.APPOINTMENT_FORM);
                 },
                 child: Container(
                   width: 200.w,
@@ -103,8 +102,6 @@ class AppointmentView extends GetView<AppointmentController> {
                       isScrollControlled: true,
                       context: context,
                       builder: (context) {
-                       
-                        
                         return Form(
                           key: _formKey,
                           child: Container(
@@ -212,7 +209,8 @@ class AppointmentView extends GetView<AppointmentController> {
                                     onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
                                         Navigator.pop(context);
-                                        await controller.addAppointmentForOthers();
+                                        await controller
+                                            .addAppointmentForOthers();
                                       }
                                     },
                                     child: Container(

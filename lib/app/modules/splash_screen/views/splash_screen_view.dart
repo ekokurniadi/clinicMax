@@ -1,6 +1,5 @@
 import 'package:clinic_max/app/data/constant/assets_constant.dart';
 import 'package:clinic_max/app/data/constant/color_constant.dart';
-import 'package:clinic_max/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -20,6 +19,8 @@ class SplashScreenView extends GetView<SplashScreenController> {
           height: MediaQuery.of(context).size.height,
           child: Center(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Image.asset(
                   AssetsConstant.clinicMaxLogo,
