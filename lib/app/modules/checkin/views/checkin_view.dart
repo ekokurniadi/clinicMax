@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:clinic_max/app/data/constant/color_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,6 +11,7 @@ class CheckinView extends GetView<CheckinController> {
   const CheckinView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    
     return Obx(() {
       return Scaffold(
         backgroundColor: ColorConstant.blueShade,
@@ -24,7 +23,6 @@ class CheckinView extends GetView<CheckinController> {
             ),
           ),
           centerTitle: true,
-          actions: [],
         ),
         body: Container(
           height: MediaQuery.of(context).size.height,
@@ -52,8 +50,12 @@ class CheckinView extends GetView<CheckinController> {
                       controller: controller.cameraController.value,
                       onDetect: (capture) async {
                         final List<Barcode> barcodes = capture.barcodes;
-                        if (barcodes.length > 0) {
-                          await controller.checkin(barcodes.first.rawValue!);
+                        for (var barcode in barcodes) {
+                          if (barcode.rawValue != null ||
+                              barcode.rawValue != '') {
+                            await controller.checkin(barcodes.first.rawValue!);
+                            break;
+                          }
                         }
                       },
                     ),

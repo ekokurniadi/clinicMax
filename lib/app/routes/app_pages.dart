@@ -1,4 +1,3 @@
-import 'package:clinic_max/app/modules/appointment/controllers/appointment_controller.dart';
 import 'package:clinic_max/app/modules/appointment/views/appointment_form.dart';
 import 'package:get/get.dart';
 

@@ -11,7 +11,6 @@ import 'package:clinic_max/app/data/providers/time_slots/time_slots.dart';
 import 'package:clinic_max/app/data/utils/sessions/session.dart';
 import 'package:clinic_max/app/data/utils/toast/toast.dart';
 import 'package:clinic_max/app/data/utils/widgets/loading.dart';
-import 'package:clinic_max/app/modules/appointment/views/appointment_form.dart';
 import 'package:clinic_max/app/routes/app_pages.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -164,14 +163,12 @@ class AppointmentController extends GetxController {
           data: AppointmentModel(
             id: 0,
             clinicId: selectedClinic.value.id,
-            email: userForCreate.email ?? '',
             userId: userForCreate.id ?? 0,
             appointmentDate:
                 DateFormat('yyyy-MM-dd').format(selectedDateTime.value),
             appointmentTime: selectedTime.value,
             isFromKiosk: false,
-            queueNumber: timeSlots.value.slots
-                .indexWhere((element) => element.time == selectedTime.value, 1),
+            queueNumber:0,
           ),
         );
 
@@ -180,7 +177,7 @@ class AppointmentController extends GetxController {
           Toast.showSuccessToast('Create appointment success');
           refresh();
           Get.delete<AppointmentController>();
-          Get.toNamed(Routes.MAIN_MENU);
+          Get.offNamed(Routes.MAIN_MENU);
         } else {
           refresh();
           LoadingApp.dismiss();
@@ -191,14 +188,12 @@ class AppointmentController extends GetxController {
           data: AppointmentModel(
             id: 0,
             clinicId: selectedClinic.value.id,
-            email: userModel.value.email!,
             userId: userModel.value.id!,
             appointmentDate:
                 DateFormat('yyyy-MM-dd').format(selectedDateTime.value),
             appointmentTime: selectedTime.value,
             isFromKiosk: false,
-            queueNumber: timeSlots.value.slots
-                .indexWhere((element) => element.time == selectedTime.value, 1),
+            queueNumber:0,
           ),
         );
 
@@ -207,7 +202,7 @@ class AppointmentController extends GetxController {
           Toast.showSuccessToast('Create appointment success');
           refresh();
           Get.delete<AppointmentController>();
-          Get.toNamed(Routes.MAIN_MENU);
+          Get.offNamed(Routes.MAIN_MENU);
         } else {
           refresh();
           LoadingApp.dismiss();

@@ -8,13 +8,13 @@ import 'package:clinic_max/app/data/utils/sessions/session.dart';
 import 'package:clinic_max/app/data/utils/toast/toast.dart';
 import 'package:clinic_max/app/data/utils/widgets/loading.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class CheckinController extends GetxController {
   final appointmentModel = AppointmentModel(
     id: 0,
     clinicId: 0,
-    email: '',
     appointmentDate: '',
     appointmentTime: '',
     isFromKiosk: false,
@@ -22,7 +22,9 @@ class CheckinController extends GetxController {
     queueNumber: 0,
   ).obs;
 
-   final cameraController = MobileScannerController().obs;
+  final isScanning = false.obs;
+
+  final cameraController = MobileScannerController().obs;
 
   @override
   Future<void> onInit() async {
@@ -43,6 +45,15 @@ class CheckinController extends GetxController {
 
   @override
   void onClose() {
+    appointmentModel.value = AppointmentModel(
+      id: 0,
+      clinicId: 0,
+      appointmentDate: '',
+      appointmentTime: '',
+      isFromKiosk: false,
+      userId: 0,
+      queueNumber: 0,
+    );
     cameraController.close();
     super.onClose();
   }
@@ -62,53 +73,111 @@ class CheckinController extends GetxController {
   }
 
   Future<void> checkin(String scannedBarcode) async {
-    final List<int> listId = jsonDecode(scannedBarcode);
-    final user = await SessionPref.getUser();
+    if (isScanning.value) return;
 
-    if (listId.contains(appointmentModel.value.id)) {
-      final bookingTime = DateTime.parse(
-        '${appointmentModel.value.appointmentDate} ${appointmentModel.value.appointmentTime}',
-      );
+    try {
+      isScanning.value = true;
 
-      final currentTime = DateTime.now();
-
-      final timeDifference = bookingTime.difference(currentTime);
-
-      if (timeDifference.inMinutes >= 0 && timeDifference.inMinutes <= 15) {
-        final updateCheckinTime = await AppointmentProvider.updateCheckinTime(
-          appointmentModel.value.id,
+      final listId = jsonDecode(scannedBarcode);
+      if (listId.contains(appointmentModel.value.id)) {
+        final bookingTime = DateTime.parse(
+          '${appointmentModel.value.appointmentDate} ${appointmentModel.value.appointmentTime}',
         );
+        final currentTime = DateTime.now();
+        final timeDifference = bookingTime.difference(currentTime);
 
-        if (updateCheckinTime) {
-          final getQueue = await QueueProvider.getQueueByClinic(
-            appointmentModel.value.clinicId,
+        if (timeDifference.inMinutes > 0 && timeDifference.inMinutes <= 15) {
+          LoadingApp.show();
+          await _setInitialCounter();
+
+          final bookedAppointment =
+              await AppointmentProvider.getAppointmentsChecked(
+            date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+            clinicId: appointmentModel.value.clinicId,
           );
 
-          if (getQueue == null) {
-            final insertQueue = await QueueProvider.insertQueueOnClinic(
-              appointmentModel.value.clinicId,
-              QueueModel(
-                clinicId: appointmentModel.value.clinicId,
-                queueNumber: 1,
-                lastUpdate: DateTime.now(),
-                queueDate: DateTime.now(),
-                id: 0,
-              ),
-            );
+          if (bookedAppointment.isNotEmpty) {
+            final counter = bookedAppointment[0].queueNumber + 1;
+            await _setCounterForAppointment(counter);
+          } else {
+            final counter = 1;
+            await _setCounterForAppointment(counter);
           }
+
+          Toast.showSuccessToast(
+            'Success',
+          );
+          LoadingApp.dismiss();
+          appointmentModel.value = AppointmentModel(
+            id: 0,
+            clinicId: 0,
+            appointmentDate: '',
+            appointmentTime: '',
+            isFromKiosk: false,
+            userId: 0,
+            queueNumber: 0,
+          );
+          Get.back();
+        } else if (timeDifference.isNegative) {
+          Toast.showErrorToast(
+            'Booking time has passed',
+          );
+        } else {
+          Toast.showErrorToast(
+            'You can only check-in a maximum of 15 minutes before booking time',
+          );
         }
-      } else if (timeDifference.isNegative) {
-        Toast.showErrorToast(
-          'Booking time has passed',
-        );
+        print('checkin');
       } else {
         Toast.showErrorToast(
-          'You can only check-in a maximum of 15 minutes before booking time',
+          'You dont have an active Appointment',
         );
       }
-      print('checkin');
+      isScanning.value = false;
+    } catch (e) {
+      Toast.showErrorToast(
+        e.toString(),
+      );
+      isScanning.value = false;
+      LoadingApp.dismiss();
+    }
+  }
+
+  Future<void> _setInitialCounter() async {
+    final getQueue = await QueueProvider.getQueueByClinic(
+      appointmentModel.value.clinicId,
+    );
+
+    if (getQueue == null) {
+      await QueueProvider.insertQueueOnClinic(
+        appointmentModel.value.clinicId,
+        QueueModel(
+          clinicId: appointmentModel.value.clinicId,
+          queueNumber: 1,
+          lastUpdate: DateTime.now(),
+          id: 0,
+        ),
+      );
     } else {
-      print('dont have appointment');
+      if (getQueue.lastUpdate.difference(DateTime.now()).inDays < 0) {
+        // set counter initial
+        await QueueProvider.resetQueueOnClinic(getQueue);
+      }
+    }
+  }
+
+  Future<void> _setCounterForAppointment(int counter) async {
+    final checkInTime = DateTime.now();
+    final result = await AppointmentProvider.updateCheckinTime(
+      id: appointmentModel.value.id,
+      counter: counter,
+      checkinTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(checkInTime),
+    );
+
+    if (result) {
+      Toast.showSuccessToast('Check in success');
+    } else {
+      Toast.showErrorToast('Check in failed, please try again');
     }
   }
 }

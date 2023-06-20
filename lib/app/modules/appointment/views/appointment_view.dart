@@ -1,5 +1,4 @@
 import 'package:clinic_max/app/data/constant/color_constant.dart';
-import 'package:clinic_max/app/modules/appointment/views/appointment_form.dart';
 import 'package:clinic_max/app/routes/app_pages.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';

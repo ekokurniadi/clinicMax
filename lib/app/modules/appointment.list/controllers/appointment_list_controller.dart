@@ -30,7 +30,7 @@ class AppointmentListController extends GetxController {
     final user = await SessionPref.getUser();
 
     final response =
-        await AppointmentProvider.getHistoryAppointment(user!.email!);
+        await AppointmentProvider.getHistoryAppointment(user!.id!);
 
     listAppointmentHistory.value = response;
   }
@@ -38,7 +38,7 @@ class AppointmentListController extends GetxController {
   Future<void> getListAppointment() async {
     final user = await SessionPref.getUser();
 
-    final response = await AppointmentProvider.getListAppointment(user!.email!);
+    final response = await AppointmentProvider.getListAppointment(user!.id!);
 
     listAppointment.value = response;
   }

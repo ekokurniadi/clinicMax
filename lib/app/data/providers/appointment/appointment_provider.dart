@@ -31,14 +31,14 @@ class AppointmentProvider {
 
   static Future<AppointmentModel?> getAppointmentByUser({
     required String date,
-    required String email,
+    required int id,
   }) async {
     final supabase = AppConfig.supabase.client;
     AppointmentModel? appointmentModel;
     final response =
         await supabase.from(AppConstant.tableAppointment).select('*').match({
       'appointment_date': date,
-      'email': email,
+      'user_id': id,
     });
 
     if (response.length > 0) {
@@ -54,7 +54,7 @@ class AppointmentProvider {
     bool saved = false;
     final getExisting = await getAppointmentByUser(
       date: data.appointmentDate,
-      email: data.email,
+      id: data.userId,
     );
 
     if (getExisting == null) {
@@ -70,7 +70,7 @@ class AppointmentProvider {
   }
 
   static Future<List<dynamic>> getHistoryAppointment(
-    String email,
+    int id,
   ) async {
     List<dynamic> data = [];
     final supabase = AppConfig.supabase.client;
@@ -80,8 +80,8 @@ class AppointmentProvider {
           '*, appointments(id,appointment_date,appointment_time),clinics(address,contact), users(name)',
         )
         .eq(
-          'email',
-          email,
+          'user_id',
+          id,
         );
 
     if (response.length > 0) {
@@ -91,7 +91,7 @@ class AppointmentProvider {
   }
 
   static Future<List<dynamic>> getListAppointment(
-    String email,
+    int id,
   ) async {
     final dateNow = DateFormat('yyyy-MM-dd').format(DateTime.now());
     final timeNow = DateFormat('HH:mm:ss').format(DateTime.now());
@@ -100,7 +100,7 @@ class AppointmentProvider {
     final response = await supabase
         .from(AppConstant.tableAppointment)
         .select('*, clinics(address,contact), users(name)')
-        .eq('email', email)
+        .eq('user_id', id)
         .eq('is_from_kiosk', false)
         .is_('checkin_time', null)
         .gte('appointment_date', dateNow)
@@ -117,12 +117,11 @@ class AppointmentProvider {
   ) async {
     AppointmentModel? appointmentModel;
     final supabase = AppConfig.supabase.client;
-    final timeNow = DateFormat('HH:mm:ss').format(DateTime.now());
+
     final response = await supabase
         .from(AppConstant.tableAppointment)
         .select('*')
         .eq('user_id', user.id)
-        .eq('email', user.email)
         .eq('appointment_date', DateFormat('yyyy-MM-dd').format(DateTime.now()))
         .eq('is_from_kiosk', false)
         .is_('checkin_time', null);
@@ -134,16 +133,42 @@ class AppointmentProvider {
     return appointmentModel;
   }
 
-  static Future<bool> updateCheckinTime(int id) async {
+  static Future<AppointmentModel?> getCurrentAppointmentAlreadyCheckin(
+    UsersModel user,
+  ) async {
+    AppointmentModel? appointmentModel;
+    final supabase = AppConfig.supabase.client;
+
+    final response = await supabase
+        .from(AppConstant.tableAppointment)
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('appointment_date', DateFormat('yyyy-MM-dd').format(DateTime.now()))
+        .eq('is_from_kiosk', false)
+        .not('checkin_time','is', null);
+
+    if (response.length > 0) {
+      appointmentModel = AppointmentModel.fromJson(response[0]);
+    }
+
+    return appointmentModel;
+  }
+
+  static Future<bool> updateCheckinTime({
+    required int id,
+    required int counter,
+    required String checkinTime,
+  }) async {
     final supabase = AppConfig.supabase.client;
 
     final response = await supabase
         .from(AppConstant.tableAppointment)
         .update({
-          'checkin_time': DateTime.now(),
-          'queue_status':'Active',
+          'checkin_time': checkinTime,
+          'queue_number': counter,
         })
         .eq('id', id)
+        .is_('checkin_time', null)
         .select();
 
     if (response.length > 0) {
@@ -151,5 +176,32 @@ class AppointmentProvider {
     }
 
     return false;
+  }
+
+  static Future<List<AppointmentModel>> getAppointmentsChecked({
+    required String date,
+    required int clinicId,
+  }) async {
+    final supabase = AppConfig.supabase.client;
+    List<AppointmentModel> appointmentModel = [];
+    final response = await supabase
+        .from(AppConstant.tableAppointment)
+        .select('*')
+        .match({
+          'appointment_date': date,
+          'clinic_id': clinicId,
+        })
+        .gt('queue_number', 0)
+        .order('queue_number')
+        .limit(1);
+
+    if (response.length > 0) {
+      appointmentModel = List<AppointmentModel>.from(
+        response.map(
+          (e) => AppointmentModel.fromJson(e),
+        ),
+      );
+    }
+    return appointmentModel;
   }
 }

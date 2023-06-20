@@ -19,7 +19,7 @@ Future<void> main() async {
         builder: (context, child) {
           return GetMaterialApp(
             debugShowCheckedModeBanner: false,
-            title: "Application",
+            title: "ClinicMax",
             theme: ThemeData(
               fontFamily: 'Inter',
               textTheme: Theme.of(context).textTheme.apply(fontFamily: 'Inter'),
