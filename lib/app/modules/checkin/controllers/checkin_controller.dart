@@ -86,7 +86,7 @@ class CheckinController extends GetxController {
         final currentTime = DateTime.now();
         final timeDifference = bookingTime.difference(currentTime);
 
-        if (timeDifference.inMinutes > 0 && timeDifference.inMinutes <= 15) {
+        // if (timeDifference.inMinutes > 0 && timeDifference.inMinutes <= 15) {
           LoadingApp.show();
           await _setInitialCounter();
 
@@ -118,15 +118,15 @@ class CheckinController extends GetxController {
             queueNumber: 0,
           );
           Get.back();
-        } else if (timeDifference.isNegative) {
-          Toast.showErrorToast(
-            'Booking time has passed',
-          );
-        } else {
-          Toast.showErrorToast(
-            'You can only check-in a maximum of 15 minutes before booking time',
-          );
-        }
+        // } else if (timeDifference.isNegative) {
+        //   Toast.showErrorToast(
+        //     'Booking time has passed',
+        //   );
+        // } else {
+        //   Toast.showErrorToast(
+        //     'You can only check-in a maximum of 15 minutes before booking time',
+        //   );
+        // }
         print('checkin');
       } else {
         Toast.showErrorToast(
