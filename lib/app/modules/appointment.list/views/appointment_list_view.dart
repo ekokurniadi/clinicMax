@@ -60,7 +60,9 @@ class AppointmentListView extends GetView<AppointmentListController> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Date : ${DateFormat('dd/MM/yyyy').format(DateTime.parse(appointmentData['appointment_date']))}',
+                                    appointmentData['appointments']['appointments_date'] != ''
+                                        ? 'Date : ${DateFormat('dd/MM/yyyy').format(DateTime.parse(appointmentData['appointments']['appointment_date']))}'
+                                        : '',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
@@ -69,7 +71,7 @@ class AppointmentListView extends GetView<AppointmentListController> {
                                   ),
                                   const Divider(),
                                   Text(
-                                    'Time : ${appointmentData['appointment_time']}',
+                                    'Time : ${appointmentData['appointments']['appointment_time']}',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
@@ -96,7 +98,7 @@ class AppointmentListView extends GetView<AppointmentListController> {
                                   ),
                                   const Divider(),
                                   Text(
-                                    'Patient Name : ${appointmentData['users']['name']}',
+                                    'Patient Name : ${controller.userModel.value.name}',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
@@ -109,7 +111,7 @@ class AppointmentListView extends GetView<AppointmentListController> {
                             );
                           })
                       : Center(
-                        child: Text(
+                          child: Text(
                             'Not found',
                             style: TextStyle(
                               color: Colors.white,
@@ -117,7 +119,7 @@ class AppointmentListView extends GetView<AppointmentListController> {
                               fontSize: 16.sp,
                             ),
                           ),
-                      ),
+                        ),
                 );
               }),
               Text(
@@ -187,7 +189,7 @@ class AppointmentListView extends GetView<AppointmentListController> {
                                   ),
                                   const Divider(),
                                   Text(
-                                    'Patient Name : ${historyData['users']['name']}',
+                                    'Patient Name : ${controller.userModel.value.name}',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
@@ -200,7 +202,7 @@ class AppointmentListView extends GetView<AppointmentListController> {
                             );
                           })
                       : Center(
-                        child: Text(
+                          child: Text(
                             'Not found',
                             style: TextStyle(
                               color: Colors.white,
@@ -208,7 +210,7 @@ class AppointmentListView extends GetView<AppointmentListController> {
                               fontSize: 16.sp,
                             ),
                           ),
-                      ),
+                        ),
                 );
               }),
             ],

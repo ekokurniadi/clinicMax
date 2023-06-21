@@ -1,7 +1,9 @@
 import 'package:clinic_max/app/data/constant/assets_constant.dart';
 import 'package:clinic_max/app/data/constant/color_constant.dart';
+import 'package:clinic_max/app/data/utils/widgets/loading.dart';
 import 'package:clinic_max/app/modules/account/views/account_view.dart';
 import 'package:clinic_max/app/modules/home/views/home_view.dart';
+import 'package:clinic_max/app/modules/medical.record/controllers/medical_record_controller.dart';
 import 'package:clinic_max/app/modules/medical.record/views/medical_record_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,12 +18,26 @@ class MainMenuView extends GetView<MainMenuController> {
   const MainMenuView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final medicalRecordController = Get.put(MedicalRecordController());
+
     return Scaffold(
       backgroundColor: ColorConstant.greyColor,
+      resizeToAvoidBottomInset: false,
       body: PersistentTabView(
         context,
         controller: controller.bottomNavcontroller,
         hideNavigationBarWhenKeyboardShows: true,
+        onItemSelected: (index) async {
+          switch (index) {
+            case 1:
+              LoadingApp.show();
+              await medicalRecordController.getMedicalRecord();
+              await medicalRecordController.getUserData();
+              LoadingApp.dismiss();
+              break;
+            default:
+          }
+        },
         screens: <Widget>[
           HomeView(),
           MedicalRecordView(),
@@ -55,9 +71,7 @@ class MainMenuView extends GetView<MainMenuController> {
         padding: const EdgeInsets.only(bottom: 52),
         child: FloatingActionButton(
           backgroundColor: ColorConstant.white,
-          onPressed: () async{
-            
-          },
+          onPressed: () async {},
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: SvgPicture.asset(

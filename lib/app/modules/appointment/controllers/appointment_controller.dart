@@ -145,69 +145,71 @@ class AppointmentController extends GetxController {
         selectedClinic.value.id != 0 &&
         selectedStates.value.id != 0) {
       LoadingApp.show();
+      try {
+        if (isForOther.value) {
+          UsersModel? userForCreate;
+          final checkUser =
+              await UserSupabaseProvider.getUserByEmail(otherUser.value.email!);
+          if (checkUser == null) {
+            final createUser = await UserSupabaseProvider.createUser(
+              otherUser.value,
+            );
+            userForCreate = createUser;
+          } else {
+            userForCreate = checkUser;
+          }
 
-      if (isForOther.value) {
-        UsersModel? userForCreate;
-        final checkUser =
-            await UserSupabaseProvider.getUserByEmail(otherUser.value.email!);
-        if (checkUser == null) {
-          final createUser = await UserSupabaseProvider.createUser(
-            otherUser.value,
+          final response = await AppointmentProvider.createAppointment(
+            data: AppointmentModel(
+              id: 0,
+              clinicId: selectedClinic.value.id,
+              userId: userForCreate.id ?? 0,
+              appointmentDate:
+                  DateFormat('yyyy-MM-dd').format(selectedDateTime.value),
+              appointmentTime: selectedTime.value,
+              isFromKiosk: false,
+              queueNumber: 0,
+            ),
           );
-          userForCreate = createUser;
-        } else {
-          userForCreate = checkUser;
-        }
 
-        final response = await AppointmentProvider.createAppointment(
-          data: AppointmentModel(
-            id: 0,
-            clinicId: selectedClinic.value.id,
-            userId: userForCreate.id ?? 0,
-            appointmentDate:
-                DateFormat('yyyy-MM-dd').format(selectedDateTime.value),
-            appointmentTime: selectedTime.value,
-            isFromKiosk: false,
-            queueNumber:0,
-          ),
-        );
+          if (response) {
+            LoadingApp.dismiss();
+            Toast.showSuccessToast('Create appointment success');
 
-        if (response) {
-          LoadingApp.dismiss();
-          Toast.showSuccessToast('Create appointment success');
-          refresh();
-          Get.delete<AppointmentController>();
-          Get.offNamed(Routes.MAIN_MENU);
+            Get.back();
+          } else {
+            refresh();
+            LoadingApp.dismiss();
+            Toast.showErrorToast('You only can create 1 appointment per day');
+          }
         } else {
-          refresh();
-          LoadingApp.dismiss();
-          Toast.showErrorToast('You only can create 1 appointment per day');
-        }
-      } else {
-        final response = await AppointmentProvider.createAppointment(
-          data: AppointmentModel(
-            id: 0,
-            clinicId: selectedClinic.value.id,
-            userId: userModel.value.id!,
-            appointmentDate:
-                DateFormat('yyyy-MM-dd').format(selectedDateTime.value),
-            appointmentTime: selectedTime.value,
-            isFromKiosk: false,
-            queueNumber:0,
-          ),
-        );
+          final response = await AppointmentProvider.createAppointment(
+            data: AppointmentModel(
+              id: 0,
+              clinicId: selectedClinic.value.id,
+              userId: userModel.value.id!,
+              appointmentDate:
+                  DateFormat('yyyy-MM-dd').format(selectedDateTime.value),
+              appointmentTime: selectedTime.value,
+              isFromKiosk: false,
+              queueNumber: 0,
+            ),
+          );
 
-        if (response) {
-          LoadingApp.dismiss();
-          Toast.showSuccessToast('Create appointment success');
-          refresh();
-          Get.delete<AppointmentController>();
-          Get.offNamed(Routes.MAIN_MENU);
-        } else {
-          refresh();
-          LoadingApp.dismiss();
-          Toast.showErrorToast('You only can create 1 appointment per day');
+          if (response) {
+            LoadingApp.dismiss();
+            Toast.showSuccessToast('Create appointment success');
+
+            Get.back();
+          } else {
+            refresh();
+            LoadingApp.dismiss();
+            Toast.showErrorToast('You only can create 1 appointment per day');
+          }
         }
+      } catch (e) {
+        Toast.showErrorToast(e.toString());
+        LoadingApp.dismiss();
       }
     } else {
       Toast.showErrorToast('Please complete appointment form first');

@@ -26,10 +26,13 @@ class QueueStatusController extends GetxController {
       .obs;
 
   StreamSubscription<QueueModel>? _connectionStreamSubscription;
+  Timer? timer;
 
   final differenceTime = ''.obs;
 
   final count = 0.obs;
+  final announces = <dynamic>[].obs;
+
   @override
   Future<void> onInit() async {
     final user = await SessionPref.getUser();
@@ -37,13 +40,8 @@ class QueueStatusController extends GetxController {
         await AppointmentProvider.getCurrentAppointmentAlreadyCheckin(user!);
     if (result != null) {
       appointment.value = result;
-      final bookingTime = DateTime.parse(
-        '${appointment.value.appointmentDate} ${appointment.value.appointmentTime}',
-      );
-      final currentTime = DateTime.now();
-      final timeDifference = bookingTime.difference(currentTime);
-      differenceTime.value = timeDifference.inHours > 0 ? '${timeDifference.inHours}h ${timeDifference.inMinutes}mins' : '-';
-      streamQueueStatus(appointment.value.clinicId);
+      await streamQueueStatus(appointment.value.clinicId);
+      await streamDuration();
     }
 
     super.onInit();
@@ -56,6 +54,7 @@ class QueueStatusController extends GetxController {
 
   @override
   void onClose() {
+    timer?.cancel();
     _connectionStreamSubscription?.cancel();
     super.onClose();
   }
@@ -64,6 +63,29 @@ class QueueStatusController extends GetxController {
     _connectionStreamSubscription =
         QueueProvider.streamQueue(clinicId).listen((event) {
       queueStatus.value = event;
+      if (clinicId > 0) {
+        final bookingTime = DateTime.parse(
+          '${appointment.value.appointmentDate} ${appointment.value.appointmentTime}',
+        );
+        final currentTime = DateTime.now();
+        final timeDifference = bookingTime.difference(currentTime);
+        differenceTime.value =
+            '${timeDifference.inHours < 0 ? '-' : timeDifference.inHours}h ${timeDifference.inMinutes < 0 ? '-' : timeDifference.inMinutes}mins';
+      }
+    });
+  }
+
+  Future<void> streamDuration() async {
+    timer = Timer.periodic(const Duration(minutes: 1), (timer) {
+      if (appointment.value.id > 0) {
+        final bookingTime = DateTime.parse(
+          '${appointment.value.appointmentDate} ${appointment.value.appointmentTime}',
+        );
+        final currentTime = DateTime.now();
+        final timeDifference = bookingTime.difference(currentTime);
+        differenceTime.value =
+            '${timeDifference.inHours < 0 ? '-' : timeDifference.inHours}h ${timeDifference.inMinutes < 0 ? '-' : timeDifference.inMinutes}mins';
+      }
     });
   }
 }

@@ -16,6 +16,7 @@ class CheckinView extends GetView<CheckinController> {
       return Scaffold(
         backgroundColor: ColorConstant.blueShade,
         appBar: AppBar(
+          backgroundColor: ColorConstant.primaryColor,
           title: Text(
             'Check in',
             style: TextStyle(

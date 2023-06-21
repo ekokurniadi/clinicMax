@@ -83,6 +83,9 @@ class RegisterView extends GetView<RegisterController> {
                                             Navigator.pop(context);
                                           },
                                           child: Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
                                             padding: const EdgeInsets.all(16),
                                             child: Text('From Galery'),
                                           ),
@@ -101,6 +104,9 @@ class RegisterView extends GetView<RegisterController> {
                                             Navigator.pop(context);
                                           },
                                           child: Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
                                             padding: const EdgeInsets.all(16),
                                             child: Text('From Camera'),
                                           ),
@@ -152,6 +158,9 @@ class RegisterView extends GetView<RegisterController> {
                           }
                           return null;
                         },
+                        onChanged: (val) {
+                          controller.formKey.value.currentState!.validate();
+                        },
                         style: TextStyle(
                           fontSize: 14.sp,
                         ),
@@ -185,6 +194,9 @@ class RegisterView extends GetView<RegisterController> {
                           }
                           return null;
                         },
+                        onChanged: (val) {
+                          controller.formKey.value.currentState!.validate();
+                        },
                         style: TextStyle(
                           fontSize: 14.sp,
                         ),
@@ -216,6 +228,9 @@ class RegisterView extends GetView<RegisterController> {
                           }
                           return null;
                         },
+                        onChanged: (val) {
+                          controller.formKey.value.currentState!.validate();
+                        },
                         style: TextStyle(
                           fontSize: 14.sp,
                         ),
@@ -246,6 +261,9 @@ class RegisterView extends GetView<RegisterController> {
                           }
                           return null;
                         },
+                        onChanged: (val) {
+                          controller.formKey.value.currentState!.validate();
+                        },
                         style: TextStyle(
                           fontSize: 14.sp,
                         ),
@@ -275,6 +293,9 @@ class RegisterView extends GetView<RegisterController> {
                             return 'Address cannot empty';
                           }
                           return null;
+                        },
+                        onChanged: (val) {
+                          controller.formKey.value.currentState!.validate();
                         },
                         style: TextStyle(
                           fontSize: 14.sp,
@@ -328,6 +349,8 @@ class RegisterView extends GetView<RegisterController> {
                                           Navigator.pop(context);
                                         },
                                         child: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
                                           padding: const EdgeInsets.all(16),
                                           child: Text('Male'),
                                         ),
@@ -339,6 +362,8 @@ class RegisterView extends GetView<RegisterController> {
                                           Navigator.pop(context);
                                         },
                                         child: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
                                           padding: const EdgeInsets.all(16),
                                           child: Text('Female'),
                                         ),
@@ -356,6 +381,9 @@ class RegisterView extends GetView<RegisterController> {
                             return 'Gender cannot empty';
                           }
                           return null;
+                        },
+                        onChanged: (val) {
+                          controller.formKey.value.currentState!.validate();
                         },
                         style: TextStyle(
                           fontSize: 14.sp,
@@ -398,6 +426,9 @@ class RegisterView extends GetView<RegisterController> {
                             return 'Date of birthday cannot empty';
                           }
                           return null;
+                        },
+                        onChanged: (val) {
+                          controller.formKey.value.currentState!.validate();
                         },
                         style: TextStyle(
                           fontSize: 14.sp,

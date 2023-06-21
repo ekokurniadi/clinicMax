@@ -1,5 +1,6 @@
 import 'package:clinic_max/app/data/constant/assets_constant.dart';
 import 'package:clinic_max/app/data/constant/color_constant.dart';
+import 'package:clinic_max/app/modules/login/views/create_an_account.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -67,6 +68,9 @@ class LoginView extends GetView<LoginController> {
                           }
                           return null;
                         },
+                        onChanged: (val) {
+                          controller.formKey.value.currentState!.validate();
+                        },
                         style: TextStyle(
                           fontSize: 14.sp,
                         ),
@@ -97,6 +101,9 @@ class LoginView extends GetView<LoginController> {
                           }
 
                           return null;
+                        },
+                        onChanged: (val) {
+                          controller.formKey.value.currentState!.validate();
                         },
                         controller: controller.passwordController.value,
                         style: TextStyle(
@@ -152,6 +159,34 @@ class LoginView extends GetView<LoginController> {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Center(
+                        child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Dont Have an account?',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            await Get.to(() => CreateAnAccount());
+                          },
+                          child: Text(
+                            'Create one',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              color: ColorConstant.primaryColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
                     SizedBox(
                       height: 16,
                     ),

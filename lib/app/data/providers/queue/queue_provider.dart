@@ -1,7 +1,6 @@
 import 'package:clinic_max/app/data/config/app_config.dart';
 import 'package:clinic_max/app/data/constant/app_constant.dart';
 import 'package:clinic_max/app/data/models/queue/queue_model.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class QueueProvider {
   const QueueProvider._();

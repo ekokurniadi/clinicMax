@@ -13,6 +13,7 @@ class QueueStatusView extends GetView<QueueStatusController> {
     return Scaffold(
         backgroundColor: ColorConstant.white,
         appBar: AppBar(
+          backgroundColor: ColorConstant.primaryColor,
           title: Text(
             'Queue Status',
             style: TextStyle(
@@ -113,6 +114,7 @@ class QueueStatusView extends GetView<QueueStatusController> {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
+                    
                   ],
                 ),
               )

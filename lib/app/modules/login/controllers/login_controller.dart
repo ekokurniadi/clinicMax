@@ -10,9 +10,12 @@ import 'package:get/get.dart';
 
 class LoginController extends GetxController {
   final obscureText = true.obs;
+  final obscureTextConfirm = true.obs;
   final emailController = TextEditingController().obs;
   final passwordController = TextEditingController().obs;
+  final passwordConfirmController = TextEditingController().obs;
   final formKey = GlobalKey<FormState>().obs;
+  final formKeyCreate = GlobalKey<FormState>().obs;
 
   @override
   void onInit() {
@@ -33,12 +36,26 @@ class LoginController extends GetxController {
     obscureText.value = !obscureText.value;
   }
 
+  void togglePasswordConfirm() {
+    obscureTextConfirm.value = !obscureTextConfirm.value;
+  }
+
   Future<void> handleSigninWithEmail() async {
     LoadingApp.show();
     final user = await Authentication.signInWithGoogle();
     if (user != null) {
       _processLoginToDB(user, 'google');
     }
+    LoadingApp.dismiss();
+  }
+
+  Future<void> handleCreateAccount() async {
+    LoadingApp.show();
+    await Authentication.createUserWIthEmailPassword(
+      email: emailController.value.text,
+      password: passwordController.value.text,
+    );
+
     LoadingApp.dismiss();
   }
 
@@ -52,6 +69,7 @@ class LoginController extends GetxController {
     if (user != null) {
       _processLoginToDB(user, 'email-password');
     }
+
     LoadingApp.dismiss();
   }
 
@@ -89,7 +107,7 @@ class LoginController extends GetxController {
         getUser.firebaseUid = getUser.firebaseUid ?? user.uid;
         Get.toNamed(Routes.REGISTER, arguments: {'user': getUser.toJson()});
       } else {
-        Get.offNamed(Routes.MAIN_MENU);
+        Get.offAllNamed(Routes.MAIN_MENU);
       }
     }
   }

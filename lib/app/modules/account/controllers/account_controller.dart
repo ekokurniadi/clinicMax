@@ -22,6 +22,7 @@ class AccountController extends GetxController {
   final dobController = TextEditingController().obs;
   final genderController = TextEditingController().obs;
   final imageFile = File('').obs;
+  final formKey = GlobalKey<FormState>().obs;
   @override
   Future<void> onInit() async {
     try {

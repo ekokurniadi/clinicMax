@@ -139,6 +139,7 @@ class AccountView extends StatelessWidget {
                 ),
                 SizedBox(height: 16.h),
                 FormInputAccount(
+                  readOnly: true,
                   icon: Icons.person,
                   label: 'Full Name',
                   inputController: controller.nameController.value,
@@ -150,108 +151,13 @@ class AccountView extends StatelessWidget {
                   inputController: controller.emailController.value,
                 ),
                 FormInputAccount(
+                  readOnly: true,
                   icon: Icons.phone,
                   label: 'Contact',
                   inputController: controller.phoneController.value,
                 ),
-                FormInputAccount(
-                  icon: Icons.assignment_ind_outlined,
-                  label: 'IC Number',
-                  inputController: controller.icNumberController.value,
-                ),
-                FormInputAccount(
-                  icon: Icons.location_on_outlined,
-                  label: 'Address',
-                  inputController: controller.addressController.value,
-                ),
-                FormInputAccount(
-                  readOnly: true,
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(1900, 1, 1),
-                      lastDate: DateTime.now(),
-                    );
-                    if (date != null) {
-                      controller.setDob(date);
-                    }
-                  },
-                  icon: Icons.date_range,
-                  label: 'DOB',
-                  inputController: controller.dobController.value,
-                ),
-                FormInputAccount(
-                  onTap: () async {
-                    await showModalBottomSheet(
-                        context: context,
-                        builder: (context) {
-                          return Container(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 16),
-                                Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Text(
-                                    'Select your Gender',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                ZoomTapAnimation(
-                                  onTap: () {
-                                    controller.setGender('Male');
-                                    Navigator.pop(context);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(16),
-                                    child: Text('Male'),
-                                  ),
-                                ),
-                                const Divider(),
-                                ZoomTapAnimation(
-                                  onTap: () {
-                                    controller.setGender('Female');
-                                    Navigator.pop(context);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(16),
-                                    child: Text('Female'),
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                              ],
-                            ),
-                          );
-                        });
-                  },
-                  icon: Icons.man,
-                  label: 'Gender',
-                  inputController: controller.genderController.value,
-                ),
                 const SizedBox(height: 16),
                 const Divider(),
-                const SizedBox(height: 16),
-
-                Container(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red
-                    ),
-                    onPressed: () async {
-                      await controller.updateUser();
-                    },
-                    child: Text('Update'),
-                  ),
-                ),
-                const SizedBox(height: 16),
               ],
             ),
           );

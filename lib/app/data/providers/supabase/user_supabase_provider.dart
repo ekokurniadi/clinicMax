@@ -46,6 +46,20 @@ class UserSupabaseProvider {
     return UsersModel.fromJson(updated[0]);
   }
 
+  static Future<UsersModel> updateUserFromMedicalRecors(
+      UsersModel users) async {
+    final supabase = AppConfig.supabase.client;
+
+    final updated = await supabase
+        .from(AppConstant.tableUser)
+        .update(users.toUpdateFromMedicalRecords())
+        .match({
+      'email': users.email,
+    }).select();
+
+    return UsersModel.fromJson(updated[0]);
+  }
+
   static Future<String?> uploadProfilePicture(File image) async {
     final supabase = AppConfig.supabase.client;
 

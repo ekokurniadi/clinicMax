@@ -77,10 +77,10 @@ class AppointmentProvider {
     final response = await supabase
         .from(AppConstant.tableMedicalRecords)
         .select(
-          '*, appointments(id,appointment_date,appointment_time),clinics(address,contact), users(name)',
+          '*, appointments(*),clinics(address,contact), users(name)',
         )
         .eq(
-          'user_id',
+          'appointments.user_id',
           id,
         );
 
@@ -145,7 +145,8 @@ class AppointmentProvider {
         .eq('user_id', user.id)
         .eq('appointment_date', DateFormat('yyyy-MM-dd').format(DateTime.now()))
         .eq('is_from_kiosk', false)
-        .not('checkin_time','is', null);
+        .not('checkin_time', 'is', null)
+        .neq('status', 'Done');
 
     if (response.length > 0) {
       appointmentModel = AppointmentModel.fromJson(response[0]);
@@ -166,6 +167,7 @@ class AppointmentProvider {
         .update({
           'checkin_time': checkinTime,
           'queue_number': counter,
+          'status': 'Waiting'
         })
         .eq('id', id)
         .is_('checkin_time', null)

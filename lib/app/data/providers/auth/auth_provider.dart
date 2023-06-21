@@ -51,7 +51,7 @@ class Authentication {
     User? user;
 
     try {
-      final credentials = await auth.createUserWithEmailAndPassword(
+      final credentials = await auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -66,27 +66,45 @@ class Authentication {
         Toast.showErrorToast(e.code);
       } else if (e.code.contains("already")) {
         Toast.showErrorToast('Please use your Google Account to Login');
+      } else if (e.code.contains('not-found')) {
+        Toast.showErrorToast('User not found, please create an account');
+      } else {
+        Toast.showErrorToast(e.code.replaceAll('-', ' '));
       }
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
+    }
 
-      try {
-        final credentials = await auth.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
+    return user;
+  }
 
-        user = credentials.user;
+  static Future<User?> createUserWIthEmailPassword({
+    required String email,
+    required String password,
+  }) async {
+    FirebaseAuth auth = AppConfig.firebaseAuth;
+    User? user;
 
-        Toast.showSuccessToast('Login Succes');
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'account-exists-with-different-credential') {
-          Toast.showErrorToast('Please use your Google Account to Login');
-        } else if (e.code == 'invalid-credential') {
-          Toast.showErrorToast(e.code);
-        } else if (e.code.contains("already")) {
-          Toast.showErrorToast('Please use your Google Account to Login');
-        }
-      } catch (e) {
-        Toast.showErrorToast(e.toString());
+    try {
+      final credentials = await auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      user = credentials.user;
+
+      Toast.showSuccessToast('Create Success, please login with your account');
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'account-exists-with-different-credential') {
+        Toast.showErrorToast(e.code);
+      } else if (e.code == 'invalid-credential') {
+        Toast.showErrorToast(e.code);
+      } else if (e.code.contains("already")) {
+        Toast.showErrorToast('Please use your Google Account to Login');
+      } else if (e.code.contains('not-found')) {
+        Toast.showErrorToast('User not found, please create an account');
+      } else {
+        Toast.showErrorToast(e.code.replaceAll('-', ' '));
       }
     } catch (e) {
       Toast.showErrorToast(e.toString());

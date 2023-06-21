@@ -13,6 +13,9 @@ class UsersModel extends Equatable {
   String? role;
   String? provider;
   String? firebaseUid;
+  String? bloodGroup;
+  double? weight;
+  double? height;
 
   UsersModel({
     this.name,
@@ -27,6 +30,9 @@ class UsersModel extends Equatable {
     this.role,
     this.provider,
     this.firebaseUid,
+    this.bloodGroup,
+    this.height,
+    this.weight,
   });
 
   factory UsersModel.fromJson(Map<String, dynamic> json) {
@@ -42,6 +48,9 @@ class UsersModel extends Equatable {
       id: json['id'],
       provider: json['provider'],
       firebaseUid: json['firebase_uid'],
+      bloodGroup: json['blood_group'],
+      weight: json['weight'],
+      height: json['height'],
     );
   }
 
@@ -55,14 +64,14 @@ class UsersModel extends Equatable {
       'dob': dob != null ? dob : dob,
       'gender': gender,
       'image_url': imageUrl,
-      'role':'Patient',
-      'provider':provider,
-      'firebase_uid':firebaseUid,
+      'role': 'Patient',
+      'provider': provider,
+      'firebase_uid': firebaseUid,
     };
   }
-  Map<String, dynamic> toPref() {
+
+  Map<String, dynamic> toUpdateFromMedicalRecords() {
     return {
-      'id':id,
       'name': name,
       'email': email,
       'phone': phone,
@@ -71,9 +80,32 @@ class UsersModel extends Equatable {
       'dob': dob != null ? dob : dob,
       'gender': gender,
       'image_url': imageUrl,
-      'role':'Patient',
-      'provider':provider,
-      'firebase_uid':firebaseUid,
+      'role': 'Patient',
+      'provider': provider,
+      'firebase_uid': firebaseUid,
+      'blood_group': bloodGroup,
+      'weight': weight,
+      'height': height,
+    };
+  }
+
+  Map<String, dynamic> toPref() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'ic_number': icNumber,
+      'address': address,
+      'dob': dob != null ? dob : dob,
+      'gender': gender,
+      'image_url': imageUrl,
+      'role': 'Patient',
+      'provider': provider,
+      'firebase_uid': firebaseUid,
+      'blood_group': bloodGroup,
+      'height': height,
+      'weight': weight,
     };
   }
 
@@ -89,5 +121,9 @@ class UsersModel extends Equatable {
         imageUrl,
         id,
         role,
+        firebaseUid,
+        bloodGroup,
+        height,
+        weight,
       ];
 }

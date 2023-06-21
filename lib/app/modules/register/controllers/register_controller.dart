@@ -19,11 +19,11 @@ class RegisterController extends GetxController {
   final dobController = TextEditingController().obs;
   final genderController = TextEditingController().obs;
   final id = 0.obs;
-  final firebaseUid =''.obs;
+  final firebaseUid = ''.obs;
   final formKey = GlobalKey<FormState>().obs;
   final imageUrl = ''.obs;
   final imageFile = File('').obs;
-  final provider =''.obs;
+  final provider = ''.obs;
   @override
   void onInit() {
     final arg = Get.arguments['user'];
@@ -38,7 +38,7 @@ class RegisterController extends GetxController {
     id.value = user.id ?? 0;
     firebaseUid.value = user.firebaseUid ?? '';
     imageUrl.value = user.imageUrl ?? '';
-    provider.value= user.provider ?? '';
+    provider.value = user.provider ?? '';
     super.onInit();
   }
 
@@ -61,25 +61,30 @@ class RegisterController extends GetxController {
   }
 
   Future<void> register() async {
-    LoadingApp.show();
-    final userModel = UsersModel(
-      name: nameController.value.text,
-      email: emailController.value.text,
-      phone: phoneController.value.text,
-      address: addressController.value.text,
-      dob: dobController.value.text,
-      gender: genderController.value.text,
-      icNumber: icNumberController.value.text,
-      imageUrl: imageUrl.value,
-      id: id.value,
-      firebaseUid: firebaseUid.value,
-      provider: provider.value,
-    );
-    final userUpdated = await UserSupabaseProvider.updateUser(userModel);
-    await SessionPref.saveUserToPref(userUpdated);
-    LoadingApp.dismiss();
-    Toast.showSuccessToast('Register Success');
-    Get.offNamed(Routes.MAIN_MENU);
+    try {
+      LoadingApp.show();
+      final userModel = UsersModel(
+        name: nameController.value.text,
+        email: emailController.value.text,
+        phone: phoneController.value.text,
+        address: addressController.value.text,
+        dob: dobController.value.text,
+        gender: genderController.value.text,
+        icNumber: icNumberController.value.text,
+        imageUrl: imageUrl.value,
+        id: id.value,
+        firebaseUid: firebaseUid.value,
+        provider: provider.value,
+      );
+      final userUpdated = await UserSupabaseProvider.updateUser(userModel);
+      await SessionPref.saveUserToPref(userUpdated);
+      LoadingApp.dismiss();
+      Toast.showSuccessToast('Register Success');
+      Get.offAllNamed(Routes.MAIN_MENU);
+    } catch (e) {
+      LoadingApp.dismiss();
+      Toast.showErrorToast(e.toString());
+    }
   }
 
   @override
