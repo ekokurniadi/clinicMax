@@ -60,8 +60,8 @@ class AppointmentListView extends GetView<AppointmentListController> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    appointmentData['appointments']['appointments_date'] != ''
-                                        ? 'Date : ${DateFormat('dd/MM/yyyy').format(DateTime.parse(appointmentData['appointments']['appointment_date']))}'
+                                    appointmentData['appointments_date'] != ''
+                                        ? 'Date : ${DateFormat('dd/MM/yyyy').format(DateTime.parse(appointmentData['appointment_date']))}'
                                         : '',
                                     style: TextStyle(
                                       color: Colors.white,
@@ -71,7 +71,7 @@ class AppointmentListView extends GetView<AppointmentListController> {
                                   ),
                                   const Divider(),
                                   Text(
-                                    'Time : ${appointmentData['appointments']['appointment_time']}',
+                                    'Time : ${appointmentData['appointment_time']}',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
