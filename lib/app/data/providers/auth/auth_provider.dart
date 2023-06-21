@@ -1,6 +1,7 @@
 import 'package:clinic_max/app/data/config/app_config.dart';
 import 'package:clinic_max/app/data/utils/toast/toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class Authentication {
@@ -71,6 +72,8 @@ class Authentication {
       } else {
         Toast.showErrorToast(e.code.replaceAll('-', ' '));
       }
+    } on PlatformException catch (e) {
+      Toast.showErrorToast(e.toString());
     } catch (e) {
       Toast.showErrorToast(e.toString());
     }
@@ -106,6 +109,8 @@ class Authentication {
       } else {
         Toast.showErrorToast(e.code.replaceAll('-', ' '));
       }
+    } on PlatformException catch (e) {
+      Toast.showErrorToast(e.toString());
     } catch (e) {
       Toast.showErrorToast(e.toString());
     }

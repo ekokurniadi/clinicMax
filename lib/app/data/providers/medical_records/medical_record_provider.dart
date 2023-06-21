@@ -11,7 +11,7 @@ class MedicalRecordProvider {
 
     final response = await supabase
         .from(AppConstant.tableMedicalRecords)
-        .select("*,appointments(*),users(*),clinics(*)")
+        .select("*,appointments!inner(*),users(*),clinics(*)")
         .eq(
           'appointments.user_id',
           userId,

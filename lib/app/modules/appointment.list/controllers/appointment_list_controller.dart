@@ -34,7 +34,7 @@ class AppointmentListController extends GetxController {
 
     final response =
         await AppointmentProvider.getHistoryAppointment(user.id!);
-
+    
     listAppointmentHistory.value = response;
   }
 
