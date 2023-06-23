@@ -129,7 +129,7 @@ class AppointmentProvider {
           .neq('status', 'Done')
           .eq('users.id', id)
           .eq('is_from_kiosk', false)
-          .gte('appointment_date', dateNow);
+          .gte('appointment_date', dateNow).order('appointment_date',ascending: true);
 
       if (response.length > 0) {
         data = response;
@@ -180,7 +180,36 @@ class AppointmentProvider {
           .eq('appointment_date',
               DateFormat('yyyy-MM-dd').format(DateTime.now()))
           .eq('is_from_kiosk', false)
-          .not('checkin_time', 'is', null);
+          .not('checkin_time', 'is', null)
+          .neq('status', 'Done');
+
+      if (response.length > 0) {
+        appointmentModel = AppointmentModel.fromJson(response[0]);
+      }
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
+    }
+
+    return appointmentModel;
+  }
+
+  static Future<AppointmentModel?> getTheBiggestQueueNumberInClinic(
+    int clinicId,
+  ) async {
+    AppointmentModel? appointmentModel;
+    final supabase = AppConfig.supabase.client;
+    try {
+      final response = await supabase
+          .from(AppConstant.tableAppointment)
+          .select('*')
+          .eq('clinic_id', clinicId)
+          .eq('appointment_date',
+              DateFormat('yyyy-MM-dd').format(DateTime.now()))
+          .not('checkin_time', 'is', null)
+          .limit(1)
+          .order(
+            'queue_number',
+          );
 
       if (response.length > 0) {
         appointmentModel = AppointmentModel.fromJson(response[0]);

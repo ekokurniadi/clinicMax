@@ -49,8 +49,8 @@ class AppointmentListView extends GetView<AppointmentListController> {
                             final appointmentData =
                                 controller.listAppointment[index];
                             return Container(
-                              padding: const EdgeInsets.all(16),
-                              margin: const EdgeInsets.only(bottom: 16),
+                              padding: const EdgeInsets.all(8),
+                              margin: const EdgeInsets.only(bottom: 8),
                               decoration: BoxDecoration(
                                 color: ColorConstant.primaryColor,
                                 borderRadius: BorderRadius.circular(8),
@@ -143,8 +143,8 @@ class AppointmentListView extends GetView<AppointmentListController> {
                             final historyData =
                                 controller.listAppointmentHistory[index];
                             return Container(
-                              padding: const EdgeInsets.all(16),
-                              margin: const EdgeInsets.only(bottom: 16),
+                              padding: const EdgeInsets.all(8),
+                              margin: const EdgeInsets.only(bottom: 8),
                               decoration: BoxDecoration(
                                 color: ColorConstant.primaryColor,
                                 borderRadius: BorderRadius.circular(8),

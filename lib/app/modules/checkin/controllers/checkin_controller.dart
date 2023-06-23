@@ -65,6 +65,10 @@ class CheckinController extends GetxController {
 
     if (data != null) {
       appointmentModel.value = data;
+    } else {
+      Toast.showErrorToast(
+        'You don\'t have an active Appointment',
+      );
     }
   }
 
@@ -129,7 +133,7 @@ class CheckinController extends GetxController {
         }
       } else {
         Toast.showErrorToast(
-          'You dont have an active Appointment',
+          'You don\'t have an active Appointment',
         );
       }
       isScanning.value = false;

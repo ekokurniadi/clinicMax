@@ -2,6 +2,7 @@ import 'package:clinic_max/app/data/models/users/users_model.dart';
 import 'package:clinic_max/app/data/providers/auth/auth_provider.dart';
 import 'package:clinic_max/app/data/providers/supabase/user_supabase_provider.dart';
 import 'package:clinic_max/app/data/utils/sessions/session.dart';
+import 'package:clinic_max/app/data/utils/toast/toast.dart';
 import 'package:clinic_max/app/data/utils/widgets/loading.dart';
 import 'package:clinic_max/app/routes/app_pages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -107,6 +108,7 @@ class LoginController extends GetxController {
         getUser.firebaseUid = getUser.firebaseUid ?? user.uid;
         Get.toNamed(Routes.REGISTER, arguments: {'user': getUser.toJson()});
       } else {
+        Toast.showSuccessToast('Redirect to main menu...');
         Get.offAllNamed(Routes.MAIN_MENU);
       }
     }

@@ -55,13 +55,15 @@ class QueueStatusView extends GetView<QueueStatusController> {
                               color: ColorConstant.white,
                               borderRadius: BorderRadius.circular(8)),
                           child: Text(
-                            controller.queueStatus.value.queueNumber
-                                .toString()
-                                .padLeft(3, '0'),
+                            controller.queueStatus.value.queueNumber > 0
+                                ? controller.queueStatus.value.queueNumber
+                                    .toString()
+                                    .padLeft(3, '0')
+                                : 'NONE',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                fontSize: 60.sp,
-                                color: ColorConstant.primaryColor,
+                                fontSize: 65.sp,
+                                color: ColorConstant.blackColor,
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: 24),
                           ),
@@ -70,25 +72,41 @@ class QueueStatusView extends GetView<QueueStatusController> {
                       const SizedBox(height: 16),
                       Visibility(
                         visible: controller.appointment.value.queueNumber >=
-                            controller.queueStatus.value.queueNumber,
-                        child: Text(
-                          'Your Queue Number : ${controller.appointment.value.queueNumber}',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            color: ColorConstant.white,
-                            fontWeight: FontWeight.w700,
-                          ),
+                                controller.queueStatus.value.queueNumber &&
+                            controller.queueStatus.value.queueNumber > 0,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Your Queue Number : ',
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                color: ColorConstant.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              '${controller.appointment.value.queueNumber}',
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                      const SizedBox(height: 8),
                       Visibility(
                         visible: controller.appointment.value.queueNumber >=
-                            controller.queueStatus.value.queueNumber,
+                                controller.queueStatus.value.queueNumber &&
+                            controller.queueStatus.value.queueNumber > 0,
                         child: Text(
                           'Duration : ${controller.differenceTime.value}',
                           style: TextStyle(
                             fontSize: 16.sp,
                             color: ColorConstant.white,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -114,7 +132,9 @@ class QueueStatusView extends GetView<QueueStatusController> {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    
+                    const Divider(
+                      color: Colors.white,
+                    ),
                   ],
                 ),
               )
