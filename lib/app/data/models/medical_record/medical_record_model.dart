@@ -1,28 +1,20 @@
 import 'package:equatable/equatable.dart';
 
 class MedicalRecordModel extends Equatable {
-  int? id;
-  int? clinicId;
-  int? appointmentId;
-  String? diagnosis;
-  String? medication;
-  String? procedures;
-  String? therapies;
-  String? instructions;
-  String? progressNotes;
-  String? followUpAppointment;
+  final int id;
+  final int clinicId;
+  final int appointmentId;
+  final int doctorId;
+  final String medicalRecordForm;
+  final String createdAt;
 
   MedicalRecordModel({
-    this.id,
-    this.appointmentId,
-    this.clinicId,
-    this.diagnosis,
-    this.followUpAppointment,
-    this.instructions,
-    this.medication,
-    this.procedures,
-    this.progressNotes,
-    this.therapies,
+    required this.id,
+    required this.appointmentId,
+    required this.clinicId,
+    required this.doctorId,
+    required this.medicalRecordForm,
+    this.createdAt = '',
   });
 
   factory MedicalRecordModel.fromJson(Map<String, dynamic> json) {
@@ -30,14 +22,20 @@ class MedicalRecordModel extends Equatable {
       id: json['id'],
       clinicId: json['clinic_id'],
       appointmentId: json['appointment_id'],
-      diagnosis: json['diagnosis'],
-      followUpAppointment: json['follow_up_appointment'],
-      instructions: json['instructions'],
-      medication: json['medication'],
-      procedures: json['procedures'],
-      progressNotes: json['progress_notes'],
-      therapies: json['therapies'],
+      doctorId: json['doctor_id'],
+      medicalRecordForm: json['medical_record_form'],
+      createdAt: json['created_at'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'clinic_id': clinicId,
+      'appointment_id': appointmentId,
+      'doctor_id': doctorId,
+      'medical_record_form': medicalRecordForm,
+    };
   }
 
   @override
@@ -45,12 +43,8 @@ class MedicalRecordModel extends Equatable {
         id,
         appointmentId,
         clinicId,
-        diagnosis,
-        followUpAppointment,
-        instructions,
-        medication,
-        procedures,
-        progressNotes,
-        therapies,
+        doctorId,
+        medicalRecordForm,
+        createdAt,
       ];
 }

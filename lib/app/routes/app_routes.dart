@@ -15,6 +15,7 @@ abstract class Routes {
   static const CHECKIN = _Paths.CHECKIN;
   static const QUEUE_STATUS = _Paths.QUEUE_STATUS;
   static const APPOINTMENT_FORM = _Paths.APPOINMENT_FORM;
+  static const MEDICAL_RECORD_DETAIL = _Paths.MEDICAL_RECORD_DETAIL;
 }
 
 abstract class _Paths {
@@ -31,4 +32,5 @@ abstract class _Paths {
   static const CHECKIN = '/checkin';
   static const QUEUE_STATUS = '/queue-status';
   static const APPOINMENT_FORM = '/appointment-form';
+  static const MEDICAL_RECORD_DETAIL = '/medical-record-detail';
 }

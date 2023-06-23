@@ -75,11 +75,25 @@ class AccountController extends GetxController {
 
   Future<void> setImage(XFile file) async {
     LoadingApp.show();
-    imageFile.value = File(file.path);
-    final url = await UserSupabaseProvider.uploadProfilePicture(
-      imageFile.value,
-    );
-    userModel.value.imageUrl = url;
+    try {
+      imageFile.value = File(file.path);
+      final url = await UserSupabaseProvider.uploadProfilePicture(
+        imageFile.value,
+      );
+      userModel.value.imageUrl = url;
+      await AppConfig.supabase.client
+          .from('users')
+          .update({'image_url': userModel.value.imageUrl}).eq(
+        'id',
+        userModel.value.id,
+      );
+
+      await getUserFromRemote();
+      update();
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
+    }
+
     LoadingApp.dismiss();
   }
 

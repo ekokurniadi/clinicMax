@@ -2,6 +2,7 @@ import 'package:clinic_max/app/data/config/app_config.dart';
 import 'package:clinic_max/app/data/constant/app_constant.dart';
 import 'package:clinic_max/app/data/models/appointment/appointment_model.dart';
 import 'package:clinic_max/app/data/models/users/users_model.dart';
+import 'package:clinic_max/app/data/utils/toast/toast.dart';
 import 'package:intl/intl.dart';
 
 class AppointmentProvider {
@@ -13,19 +14,25 @@ class AppointmentProvider {
   }) async {
     final supabase = AppConfig.supabase.client;
     List<AppointmentModel> appointmentModel = [];
-    final response =
-        await supabase.from(AppConstant.tableAppointment).select('*').match({
-      'appointment_date': date,
-      'clinic_id': clinicId,
-    });
 
-    if (response.length > 0) {
-      appointmentModel = List<AppointmentModel>.from(
-        response.map(
-          (e) => AppointmentModel.fromJson(e),
-        ),
-      );
+    try {
+      final response =
+          await supabase.from(AppConstant.tableAppointment).select('*').match({
+        'appointment_date': date,
+        'clinic_id': clinicId,
+      });
+
+      if (response.length > 0) {
+        appointmentModel = List<AppointmentModel>.from(
+          response.map(
+            (e) => AppointmentModel.fromJson(e),
+          ),
+        );
+      }
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
     }
+
     return appointmentModel;
   }
 
@@ -35,15 +42,21 @@ class AppointmentProvider {
   }) async {
     final supabase = AppConfig.supabase.client;
     AppointmentModel? appointmentModel;
-    final response =
-        await supabase.from(AppConstant.tableAppointment).select('*').match({
-      'appointment_date': date,
-      'user_id': id,
-    });
 
-    if (response.length > 0) {
-      appointmentModel = AppointmentModel.fromJson(response[0]);
+    try {
+      final response =
+          await supabase.from(AppConstant.tableAppointment).select('*').match({
+        'appointment_date': date,
+        'user_id': id,
+      });
+
+      if (response.length > 0) {
+        appointmentModel = AppointmentModel.fromJson(response[0]);
+      }
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
     }
+
     return appointmentModel;
   }
 
@@ -52,18 +65,23 @@ class AppointmentProvider {
   }) async {
     final supabase = AppConfig.supabase.client;
     bool saved = false;
-    final getExisting = await getAppointmentByUser(
-      date: data.appointmentDate,
-      id: data.userId,
-    );
 
-    if (getExisting == null) {
-      final response = await supabase
-          .from(AppConstant.tableAppointment)
-          .insert(data.toJson())
-          .select('id');
+    try {
+      final getExisting = await getAppointmentByUser(
+        date: data.appointmentDate,
+        id: data.userId,
+      );
 
-      return saved = response.length > 0;
+      if (getExisting == null) {
+        final response = await supabase
+            .from(AppConstant.tableAppointment)
+            .insert(data.toJson())
+            .select('id');
+
+        saved = response.length > 0;
+      }
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
     }
 
     return saved;
@@ -72,21 +90,27 @@ class AppointmentProvider {
   static Future<List<dynamic>> getHistoryAppointment(
     int id,
   ) async {
-    List<dynamic> data = [];
     final supabase = AppConfig.supabase.client;
-    final response = await supabase
-        .from(AppConstant.tableMedicalRecords)
-        .select(
-          '*, appointments(*),clinics(address,contact), users(name)',
-        )
-        .eq(
-          'appointments.user_id',
-          id,
-        );
+    List<dynamic> data = [];
 
-    if (response.length > 0) {
-      data = response;
+    try {
+      final response = await supabase
+          .from(AppConstant.tableMedicalRecords)
+          .select(
+            '*, appointments!inner(*),clinics(address,contact), users(name)',
+          )
+          .eq(
+            'appointments.user_id',
+            id,
+          );
+
+      if (response.length > 0) {
+        data = response;
+      }
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
     }
+
     return data;
   }
 
@@ -94,21 +118,26 @@ class AppointmentProvider {
     int id,
   ) async {
     final dateNow = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    final timeNow = DateFormat('HH:mm:ss').format(DateTime.now());
-    List<dynamic> data = [];
-    final supabase = AppConfig.supabase.client;
-    final response = await supabase
-        .from(AppConstant.tableAppointment)
-        .select('*, clinics(address,contact), users(name)')
-        .eq('user_id', id)
-        .eq('is_from_kiosk', false)
-        .is_('checkin_time', null)
-        .gte('appointment_date', dateNow)
-        .gte('appointment_time', timeNow);
 
-    if (response.length > 0) {
-      data = response;
+    List<dynamic> data = [];
+    try {
+      final supabase = AppConfig.supabase.client;
+      final response = await supabase
+          .from(AppConstant.tableAppointment)
+          .select(
+              'id,clinic_id,appointment_date,appointment_time,is_from_kiosk,checkin_time,user_id,queue_number,status, clinics(address,contact), users!inner(*)')
+          .neq('status', 'Done')
+          .eq('users.id', id)
+          .eq('is_from_kiosk', false)
+          .gte('appointment_date', dateNow);
+
+      if (response.length > 0) {
+        data = response;
+      }
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
     }
+
     return data;
   }
 
@@ -116,18 +145,23 @@ class AppointmentProvider {
     UsersModel user,
   ) async {
     AppointmentModel? appointmentModel;
-    final supabase = AppConfig.supabase.client;
+    try {
+      final supabase = AppConfig.supabase.client;
 
-    final response = await supabase
-        .from(AppConstant.tableAppointment)
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('appointment_date', DateFormat('yyyy-MM-dd').format(DateTime.now()))
-        .eq('is_from_kiosk', false)
-        .is_('checkin_time', null);
+      final response = await supabase
+          .from(AppConstant.tableAppointment)
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('appointment_date',
+              DateFormat('yyyy-MM-dd').format(DateTime.now()))
+          .eq('is_from_kiosk', false)
+          .is_('checkin_time', null);
 
-    if (response.length > 0) {
-      appointmentModel = AppointmentModel.fromJson(response[0]);
+      if (response.length > 0) {
+        appointmentModel = AppointmentModel.fromJson(response[0]);
+      }
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
     }
 
     return appointmentModel;
@@ -138,18 +172,21 @@ class AppointmentProvider {
   ) async {
     AppointmentModel? appointmentModel;
     final supabase = AppConfig.supabase.client;
+    try {
+      final response = await supabase
+          .from(AppConstant.tableAppointment)
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('appointment_date',
+              DateFormat('yyyy-MM-dd').format(DateTime.now()))
+          .eq('is_from_kiosk', false)
+          .not('checkin_time', 'is', null);
 
-    final response = await supabase
-        .from(AppConstant.tableAppointment)
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('appointment_date', DateFormat('yyyy-MM-dd').format(DateTime.now()))
-        .eq('is_from_kiosk', false)
-        .not('checkin_time', 'is', null)
-        .neq('status', 'Done');
-
-    if (response.length > 0) {
-      appointmentModel = AppointmentModel.fromJson(response[0]);
+      if (response.length > 0) {
+        appointmentModel = AppointmentModel.fromJson(response[0]);
+      }
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
     }
 
     return appointmentModel;
@@ -161,23 +198,28 @@ class AppointmentProvider {
     required String checkinTime,
   }) async {
     final supabase = AppConfig.supabase.client;
+    bool result = false;
 
-    final response = await supabase
-        .from(AppConstant.tableAppointment)
-        .update({
-          'checkin_time': checkinTime,
-          'queue_number': counter,
-          'status': 'Waiting'
-        })
-        .eq('id', id)
-        .is_('checkin_time', null)
-        .select();
+    try {
+      final response = await supabase
+          .from(AppConstant.tableAppointment)
+          .update({
+            'checkin_time': checkinTime,
+            'queue_number': counter,
+            'status': 'Waiting'
+          })
+          .eq('id', id)
+          .is_('checkin_time', null)
+          .select();
 
-    if (response.length > 0) {
-      return true;
+      if (response.length > 0) {
+        result = true;
+      }
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
     }
 
-    return false;
+    return result;
   }
 
   static Future<List<AppointmentModel>> getAppointmentsChecked({
@@ -186,24 +228,30 @@ class AppointmentProvider {
   }) async {
     final supabase = AppConfig.supabase.client;
     List<AppointmentModel> appointmentModel = [];
-    final response = await supabase
-        .from(AppConstant.tableAppointment)
-        .select('*')
-        .match({
-          'appointment_date': date,
-          'clinic_id': clinicId,
-        })
-        .gt('queue_number', 0)
-        .order('queue_number')
-        .limit(1);
 
-    if (response.length > 0) {
-      appointmentModel = List<AppointmentModel>.from(
-        response.map(
-          (e) => AppointmentModel.fromJson(e),
-        ),
-      );
+    try {
+      final response = await supabase
+          .from(AppConstant.tableAppointment)
+          .select('*')
+          .match({
+            'appointment_date': date,
+            'clinic_id': clinicId,
+          })
+          .gt('queue_number', 0)
+          .order('queue_number')
+          .limit(1);
+
+      if (response.length > 0) {
+        appointmentModel = List<AppointmentModel>.from(
+          response.map(
+            (e) => AppointmentModel.fromJson(e),
+          ),
+        );
+      }
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
     }
+
     return appointmentModel;
   }
 }

@@ -69,6 +69,7 @@ class HomeView extends StatelessWidget {
                                 menu.icons,
                                 width: index == 2 ? 40.w : 45.w,
                                 fit: BoxFit.cover,
+                                // ignore: deprecated_member_use
                                 color: ColorConstant.primaryColor,
                               ),
                               Text(

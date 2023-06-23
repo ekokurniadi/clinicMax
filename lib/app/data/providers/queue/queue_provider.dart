@@ -1,6 +1,7 @@
 import 'package:clinic_max/app/data/config/app_config.dart';
 import 'package:clinic_max/app/data/constant/app_constant.dart';
 import 'package:clinic_max/app/data/models/queue/queue_model.dart';
+import 'package:clinic_max/app/data/utils/toast/toast.dart';
 
 class QueueProvider {
   const QueueProvider._();
@@ -8,13 +9,19 @@ class QueueProvider {
   static Future<QueueModel?> getQueueByClinic(int clinicId) async {
     final supabase = AppConfig.supabase.client;
     QueueModel? queueModel;
-    final response = await supabase.from(AppConstant.tableQueue).select('*').eq(
-          'clinic_id',
-          clinicId,
-        );
 
-    if (response.length > 0) {
-      queueModel = QueueModel.fromJson(response[0]);
+    try {
+      final response =
+          await supabase.from(AppConstant.tableQueue).select('*').eq(
+                'clinic_id',
+                clinicId,
+              );
+
+      if (response.length > 0) {
+        queueModel = QueueModel.fromJson(response[0]);
+      }
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
     }
 
     return queueModel;
@@ -26,14 +33,19 @@ class QueueProvider {
   ) async {
     final supabase = AppConfig.supabase.client;
     QueueModel? queueModel;
-    final response = await supabase
-        .from(AppConstant.tableQueue)
-        .insert(queue.toJson())
-        .eq('clinic_id', clinicId)
-        .select();
 
-    if (response.length > 0) {
-      queueModel = QueueModel.fromJson(response[0]);
+    try {
+      final response = await supabase
+          .from(AppConstant.tableQueue)
+          .insert(queue.toJson())
+          .eq('clinic_id', clinicId)
+          .select();
+
+      if (response.length > 0) {
+        queueModel = QueueModel.fromJson(response[0]);
+      }
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
     }
 
     return queueModel;
@@ -44,17 +56,22 @@ class QueueProvider {
   ) async {
     final supabase = AppConfig.supabase.client;
     QueueModel? queueModel;
-    final response = await supabase
-        .from(AppConstant.tableQueue)
-        .update({
-          'queue_number': 1,
-          'last_update':  DateTime.now().toIso8601String(),
-        })
-        .eq('clinic_id', queue.clinicId)
-        .select();
 
-    if (response.length > 0) {
-      queueModel = QueueModel.fromJson(response[0]);
+    try {
+      final response = await supabase
+          .from(AppConstant.tableQueue)
+          .update({
+            'queue_number': 1,
+            'last_update': DateTime.now().toIso8601String(),
+          })
+          .eq('clinic_id', queue.clinicId)
+          .select();
+
+      if (response.length > 0) {
+        queueModel = QueueModel.fromJson(response[0]);
+      }
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
     }
 
     return queueModel;

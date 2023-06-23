@@ -1,4 +1,3 @@
-import 'package:clinic_max/app/modules/appointment/views/appointment_form.dart';
 import 'package:get/get.dart';
 
 import '../modules/account/bindings/account_binding.dart';
@@ -6,6 +5,7 @@ import '../modules/account/views/account_view.dart';
 import '../modules/appointment.list/bindings/appointment_list_binding.dart';
 import '../modules/appointment.list/views/appointment_list_view.dart';
 import '../modules/appointment/bindings/appointment_binding.dart';
+import '../modules/appointment/views/appointment_form.dart';
 import '../modules/appointment/views/appointment_view.dart';
 import '../modules/checkin/bindings/checkin_binding.dart';
 import '../modules/checkin/views/checkin_view.dart';
@@ -17,6 +17,8 @@ import '../modules/main_menu/bindings/main_menu_binding.dart';
 import '../modules/main_menu/views/main_menu_view.dart';
 import '../modules/medical.record/bindings/medical_record_binding.dart';
 import '../modules/medical.record/views/medical_record_view.dart';
+import '../modules/medical_record_detail/bindings/medical_record_detail_binding.dart';
+import '../modules/medical_record_detail/views/medical_record_detail_view.dart';
 import '../modules/queue.status/bindings/queue_status_binding.dart';
 import '../modules/queue.status/views/queue_status_view.dart';
 import '../modules/register/bindings/register_binding.dart';
@@ -61,6 +63,11 @@ class AppPages {
       name: _Paths.MEDICAL_RECORD,
       page: () => const MedicalRecordView(),
       binding: MedicalRecordBinding(),
+    ),
+    GetPage(
+      name: _Paths.MEDICAL_RECORD_DETAIL,
+      page: () => const MedicalRecordDetailView(),
+      binding: MedicalRecordDetailBinding(),
     ),
     GetPage(
       name: _Paths.ACCOUNT,

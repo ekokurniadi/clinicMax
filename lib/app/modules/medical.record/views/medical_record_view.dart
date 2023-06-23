@@ -1,14 +1,12 @@
-import 'dart:typed_data';
-
 import 'package:clinic_max/app/data/constant/color_constant.dart';
-import 'package:clinic_max/app/modules/medical.record/views/medical_record_viewer.dart';
+import 'package:clinic_max/app/data/models/medical_record/medical_record_model.dart';
+import 'package:clinic_max/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 
 import '../controllers/medical_record_controller.dart';
 
@@ -21,62 +19,6 @@ class MedicalRecordView extends StatefulWidget {
 
 class _MedicalRecordViewState extends State<MedicalRecordView> {
   late MedicalRecordController controller;
-  int age = 0;
-
-  int getAge(String date) {
-    final now = DateTime.now();
-    final bod = DateTime.parse(date);
-
-    return (now.difference(bod).inDays / 365).round();
-  }
-
-  Future<Uint8List> generatePdf(dynamic data) async {
-    final doc = pw.Document();
-
-    doc.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        build: (pw.Context context) {
-          return pw.Column(
-            mainAxisAlignment: pw.MainAxisAlignment.start,
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text('Medical Record',
-                  style: pw.TextStyle(
-                    fontSize: 24,
-                    fontWeight: pw.FontWeight.bold,
-                  )),
-              pw.SizedBox(height: 32),
-              pw.Text('Medical Record ID : ${data['id']}'),
-              pw.Divider(),
-              pw.Text('Clinic : ${data['clinics']['name']}'),
-              pw.Divider(),
-              pw.Text('Clinic Address: ${data['clinics']['address']}'),
-              pw.Divider(),
-              pw.Text('Doctor : ${data['users']['name']}'),
-              pw.Divider(),
-              pw.Text('Diagnosis : ${data['diagnosis']}'),
-              pw.Divider(),
-              pw.Text('Medication : ${data['medication']}'),
-              pw.Divider(),
-              pw.Text('Procedures : ${data['procedures']}'),
-              pw.Divider(),
-              pw.Text('Therapies : ${data['therapis']}'),
-              pw.Divider(),
-              pw.Text('Instructions : ${data['instructions']}'),
-              pw.Divider(),
-              pw.Text('Progress Notes : ${data['progress_notes']}'),
-              pw.Divider(),
-              pw.Text(
-                  'Follow Up Appointment : ${data['follow_up_appointment']}'),
-            ],
-          ); // Center
-        },
-      ),
-    ); //
-
-    return doc.save();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,9 +96,6 @@ class _MedicalRecordViewState extends State<MedicalRecordView> {
                     }
                     return null;
                   },
-                  onChanged: (value) {
-                    controller.formKey.value.currentState!.validate();
-                  },
                   title: 'IC Number',
                   controller: controller,
                   editingController: controller.icNumberController.value,
@@ -167,9 +106,6 @@ class _MedicalRecordViewState extends State<MedicalRecordView> {
                       return 'Gender is required';
                     }
                     return null;
-                  },
-                  onChanged: (value) {
-                    controller.formKey.value.currentState!.validate();
                   },
                   title: 'Gender',
                   color: ColorConstant.primaryColor.withAlpha(50),
@@ -235,9 +171,6 @@ class _MedicalRecordViewState extends State<MedicalRecordView> {
                     }
                     return null;
                   },
-                  onChanged: (value) {
-                    controller.formKey.value.currentState!.validate();
-                  },
                   title: 'Contact',
                   editingController: controller.phoneController.value,
                   controller: controller,
@@ -248,9 +181,6 @@ class _MedicalRecordViewState extends State<MedicalRecordView> {
                       return 'DOB is required';
                     }
                     return null;
-                  },
-                  onChanged: (value) {
-                    controller.formKey.value.currentState!.validate();
                   },
                   title: 'DOB',
                   color: ColorConstant.primaryColor.withAlpha(50),
@@ -275,9 +205,6 @@ class _MedicalRecordViewState extends State<MedicalRecordView> {
                       return 'Address is required';
                     }
                     return null;
-                  },
-                  onChanged: (value) {
-                    controller.formKey.value.currentState!.validate();
                   },
                   title: 'Address',
                   editingController: controller.addressController.value,
@@ -342,14 +269,18 @@ class _MedicalRecordViewState extends State<MedicalRecordView> {
                           ),
                           itemCount: controller.listMedicalRecord.length,
                           itemBuilder: (context, index) {
+                            final medicalRecordData =
+                                MedicalRecordModel.fromJson(
+                              controller.listMedicalRecord[index],
+                            );
+
                             return ZoomTapAnimation(
-                              onTap: () async {
-                                final pdfData = await generatePdf(
-                                  controller.listMedicalRecord[index],
-                                );
-                                Get.to(() => MedicalRecordViewer(
-                                      data: pdfData,
-                                    ));
+                              onTap: () {
+                                Get.toNamed(Routes.MEDICAL_RECORD_DETAIL,
+                                    arguments: {
+                                      'medical_record': medicalRecordData,
+                                      'user': controller.userModel.value,
+                                    });
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -358,13 +289,13 @@ class _MedicalRecordViewState extends State<MedicalRecordView> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    'PDF\n' +
-                                        controller.listMedicalRecord[index]
-                                                ['id']
-                                            .toString(),
+                                    DateFormat('EEEE\n dd MMM yyyy').format(
+                                      DateTime.parse(
+                                          medicalRecordData.createdAt),
+                                    ),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: 16.sp,
+                                      fontSize: 14.sp,
                                       color: ColorConstant.primaryColor,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -392,7 +323,7 @@ class BiodataWidget extends StatefulWidget {
   final bool isReadonly;
   final String? Function(String?)? validator;
   final void Function()? onTap;
-  final void Function(String)? onChanged;
+
   const BiodataWidget({
     super.key,
     required this.title,
@@ -402,7 +333,6 @@ class BiodataWidget extends StatefulWidget {
     this.isReadonly = false,
     this.onTap,
     this.validator,
-    this.onChanged,
   });
 
   @override
@@ -425,7 +355,6 @@ class _BiodataWidgetState extends State<BiodataWidget> {
             flex: 2,
             child: TextFormField(
               validator: widget.validator,
-              onChanged: widget.onChanged,
               onTap: widget.onTap,
               readOnly: widget.isReadonly,
               controller: widget.editingController,

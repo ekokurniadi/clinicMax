@@ -85,10 +85,6 @@ class _CreateAnAccountState extends State<CreateAnAccount> {
                                 }
                                 return null;
                               },
-                              onChanged: (val) {
-                                controller.formKeyCreate.value.currentState!
-                                    .validate();
-                              },
                               style: TextStyle(
                                 fontSize: 14.sp,
                               ),

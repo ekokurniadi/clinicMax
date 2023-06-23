@@ -38,6 +38,7 @@ class AppointmentModel extends Equatable {
       'appointment_time': appointmentTime,
       'user_id': userId,
       'queue_number': queueNumber,
+      'status':'Waiting'
     };
   }
 

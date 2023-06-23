@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:clinic_max/app/data/config/app_config.dart';
 import 'package:clinic_max/app/data/constant/app_constant.dart';
 import 'package:clinic_max/app/data/models/users/users_model.dart';
+import 'package:clinic_max/app/data/utils/toast/toast.dart';
 import 'package:path/path.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -62,20 +63,25 @@ class UserSupabaseProvider {
 
   static Future<String?> uploadProfilePicture(File image) async {
     final supabase = AppConfig.supabase.client;
+    String url='';
+    try {
+      await supabase.storage.from('users_image').upload(
+            'public/${basename(image.path)}',
+            image,
+            fileOptions: const FileOptions(
+              cacheControl: '3600',
+              upsert: false,
+            ),
+          );
 
-    await supabase.storage.from('users_image').upload(
-          'public/${basename(image.path)}',
-          image,
-          fileOptions: const FileOptions(
-            cacheControl: '3600',
-            upsert: false,
-          ),
-        );
-
-    final getPublicUrl =
-        await supabase.storage.from('users_image').getPublicUrl(
-              'public/${basename(image.path)}',
-            );
-    return getPublicUrl;
+      final getPublicUrl =
+          await supabase.storage.from('users_image').getPublicUrl(
+                'public/${basename(image.path)}',
+              );
+      url= getPublicUrl;
+    } catch (e) {
+      Toast.showErrorToast(e.toString());
+    }
+    return url;
   }
 }

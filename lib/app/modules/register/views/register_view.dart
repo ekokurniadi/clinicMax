@@ -158,9 +158,6 @@ class RegisterView extends GetView<RegisterController> {
                           }
                           return null;
                         },
-                        onChanged: (val) {
-                          controller.formKey.value.currentState!.validate();
-                        },
                         style: TextStyle(
                           fontSize: 14.sp,
                         ),
@@ -185,6 +182,7 @@ class RegisterView extends GetView<RegisterController> {
                       width: double.infinity,
                       child: TextFormField(
                         controller: controller.emailController.value,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         readOnly: true,
                         validator: (val) {
                           if (val!.isEmpty) {
@@ -193,9 +191,6 @@ class RegisterView extends GetView<RegisterController> {
                             return 'Email not valid';
                           }
                           return null;
-                        },
-                        onChanged: (val) {
-                          controller.formKey.value.currentState!.validate();
                         },
                         style: TextStyle(
                           fontSize: 14.sp,
@@ -222,14 +217,12 @@ class RegisterView extends GetView<RegisterController> {
                       width: double.infinity,
                       child: TextFormField(
                         controller: controller.phoneController.value,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (val) {
                           if (val!.isEmpty) {
                             return 'Phone cannot empty';
                           }
                           return null;
-                        },
-                        onChanged: (val) {
-                          controller.formKey.value.currentState!.validate();
                         },
                         style: TextStyle(
                           fontSize: 14.sp,
@@ -255,14 +248,12 @@ class RegisterView extends GetView<RegisterController> {
                       width: double.infinity,
                       child: TextFormField(
                         controller: controller.icNumberController.value,
+                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (val) {
                           if (val!.isEmpty) {
                             return 'IC Number cannot empty';
                           }
                           return null;
-                        },
-                        onChanged: (val) {
-                          controller.formKey.value.currentState!.validate();
                         },
                         style: TextStyle(
                           fontSize: 14.sp,
@@ -288,14 +279,12 @@ class RegisterView extends GetView<RegisterController> {
                       width: double.infinity,
                       child: TextFormField(
                         controller: controller.addressController.value,
+                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (val) {
                           if (val!.isEmpty) {
                             return 'Address cannot empty';
                           }
                           return null;
-                        },
-                        onChanged: (val) {
-                          controller.formKey.value.currentState!.validate();
                         },
                         style: TextStyle(
                           fontSize: 14.sp,
@@ -376,14 +365,12 @@ class RegisterView extends GetView<RegisterController> {
                         },
                         readOnly: true,
                         controller: controller.genderController.value,
+                        
                         validator: (val) {
                           if (val!.isEmpty) {
                             return 'Gender cannot empty';
                           }
                           return null;
-                        },
-                        onChanged: (val) {
-                          controller.formKey.value.currentState!.validate();
                         },
                         style: TextStyle(
                           fontSize: 14.sp,
@@ -426,9 +413,6 @@ class RegisterView extends GetView<RegisterController> {
                             return 'Date of birthday cannot empty';
                           }
                           return null;
-                        },
-                        onChanged: (val) {
-                          controller.formKey.value.currentState!.validate();
                         },
                         style: TextStyle(
                           fontSize: 14.sp,

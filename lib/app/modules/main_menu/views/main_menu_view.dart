@@ -1,6 +1,7 @@
 import 'package:clinic_max/app/data/constant/assets_constant.dart';
 import 'package:clinic_max/app/data/constant/color_constant.dart';
 import 'package:clinic_max/app/data/utils/widgets/loading.dart';
+import 'package:clinic_max/app/modules/account/controllers/account_controller.dart';
 import 'package:clinic_max/app/modules/account/views/account_view.dart';
 import 'package:clinic_max/app/modules/home/views/home_view.dart';
 import 'package:clinic_max/app/modules/medical.record/controllers/medical_record_controller.dart';
@@ -19,6 +20,7 @@ class MainMenuView extends GetView<MainMenuController> {
   @override
   Widget build(BuildContext context) {
     final medicalRecordController = Get.put(MedicalRecordController());
+    final accountController = Get.put(AccountController());
 
     return Scaffold(
       backgroundColor: ColorConstant.greyColor,
@@ -33,6 +35,11 @@ class MainMenuView extends GetView<MainMenuController> {
               LoadingApp.show();
               await medicalRecordController.getMedicalRecord();
               await medicalRecordController.getUserData();
+              LoadingApp.dismiss();
+              break;
+            case 2:
+              LoadingApp.show();
+              await accountController.getUserFromRemote();
               LoadingApp.dismiss();
               break;
             default:

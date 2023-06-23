@@ -86,7 +86,7 @@ class CheckinController extends GetxController {
         final currentTime = DateTime.now();
         final timeDifference = bookingTime.difference(currentTime);
 
-        // if (timeDifference.inMinutes > 0 && timeDifference.inMinutes <= 15) {
+        if (timeDifference.inMinutes > 0 && timeDifference.inMinutes <= 15) {
           LoadingApp.show();
           await _setInitialCounter();
 
@@ -118,16 +118,15 @@ class CheckinController extends GetxController {
             queueNumber: 0,
           );
           Get.back();
-        // } else if (timeDifference.isNegative) {
-        //   Toast.showErrorToast(
-        //     'Booking time has passed',
-        //   );
-        // } else {
-        //   Toast.showErrorToast(
-        //     'You can only check-in a maximum of 15 minutes before booking time',
-        //   );
-        // }
-        print('checkin');
+        } else if (timeDifference.isNegative) {
+          Toast.showErrorToast(
+            'Booking time has passed',
+          );
+        } else {
+          Toast.showErrorToast(
+            'You can only check-in a maximum of 15 minutes before booking time',
+          );
+        }
       } else {
         Toast.showErrorToast(
           'You dont have an active Appointment',
@@ -159,11 +158,20 @@ class CheckinController extends GetxController {
         ),
       );
     } else {
-      if (getQueue.lastUpdate.difference(DateTime.now()).inDays < 0) {
+      final getDiff = getDateDifference(getQueue.lastUpdate, DateTime.now());
+
+      if (getDiff > 0) {
         // set counter initial
         await QueueProvider.resetQueueOnClinic(getQueue);
       }
     }
+  }
+
+  int getDateDifference(DateTime from, DateTime to) {
+    final newFrom = DateTime(from.year, from.month, from.day);
+    final newTo = DateTime(to.year, to.month, to.day);
+
+    return newTo.difference(newFrom).inDays;
   }
 
   Future<void> _setCounterForAppointment(int counter) async {
