@@ -129,7 +129,8 @@ class AppointmentProvider {
           .neq('status', 'Done')
           .eq('users.id', id)
           .eq('is_from_kiosk', false)
-          .gte('appointment_date', dateNow).order('appointment_date',ascending: true);
+          .gte('appointment_date', dateNow)
+          .order('appointment_date', ascending: true);
 
       if (response.length > 0) {
         data = response;

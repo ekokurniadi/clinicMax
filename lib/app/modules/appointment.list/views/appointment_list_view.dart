@@ -107,6 +107,17 @@ class AppointmentListView extends GetView<AppointmentListController> {
                                     ),
                                   ),
                                   const Divider(),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                    ),
+                                    onPressed: () async {
+                                      await controller.cancelAppointment(
+                                        appointmentData['id'],
+                                      );
+                                    },
+                                    child: Text('Cancel'),
+                                  )
                                 ],
                               ),
                             );

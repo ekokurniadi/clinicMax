@@ -175,7 +175,7 @@ class AppointmentController extends GetxController {
           if (response) {
             LoadingApp.dismiss();
             Toast.showSuccessToast('Create appointment success');
-
+            await onInit();
             Get.back();
           } else {
             refresh();
@@ -199,7 +199,7 @@ class AppointmentController extends GetxController {
           if (response) {
             LoadingApp.dismiss();
             Toast.showSuccessToast('Create appointment success');
-
+            await onInit();
             Get.back();
           } else {
             refresh();

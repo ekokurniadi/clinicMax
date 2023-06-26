@@ -22,6 +22,7 @@ class MedicalRecordDetailController extends GetxController {
   final user = UsersModel().obs;
 
   final listAttachment = <MedicalRecordAttachments>[].obs;
+  final listDownloaded = <int>[].obs;
 
   @override
   Future<void> onInit() async {
@@ -64,6 +65,7 @@ class MedicalRecordDetailController extends GetxController {
   }
 
   Future<void> downloadAttachment({
+    required int id,
     required String url,
     required String fileName,
   }) async {
@@ -73,9 +75,10 @@ class MedicalRecordDetailController extends GetxController {
     );
 
     if (result != null) {
+      listDownloaded.add(id);
       Toast.showSuccessToast('Download success');
       LoadingApp.dismiss();
-      await OpenFile.open(result, type: "application/pdf");
+      await OpenFile.open(result);
     }
   }
 }

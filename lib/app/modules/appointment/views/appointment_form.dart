@@ -25,6 +25,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   @override
   void initState() {
     appointmentController = Get.put(AppointmentController());
+    appointmentController.setSelectedStates(StatesModel(name: '', id: 0));
     super.initState();
   }
 

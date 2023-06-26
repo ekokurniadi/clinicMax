@@ -1,6 +1,9 @@
+import 'package:clinic_max/app/data/config/app_config.dart';
+import 'package:clinic_max/app/data/constant/app_constant.dart';
 import 'package:clinic_max/app/data/models/users/users_model.dart';
 import 'package:clinic_max/app/data/providers/appointment/appointment_provider.dart';
 import 'package:clinic_max/app/data/utils/sessions/session.dart';
+import 'package:clinic_max/app/data/utils/toast/toast.dart';
 import 'package:clinic_max/app/data/utils/widgets/loading.dart';
 import 'package:get/get.dart';
 
@@ -32,9 +35,8 @@ class AppointmentListController extends GetxController {
     final user = await SessionPref.getUser();
     userModel.value = user!;
 
-    final response =
-        await AppointmentProvider.getHistoryAppointment(user.id!);
-    
+    final response = await AppointmentProvider.getHistoryAppointment(user.id!);
+
     listAppointmentHistory.value = response;
   }
 
@@ -44,5 +46,20 @@ class AppointmentListController extends GetxController {
     final response = await AppointmentProvider.getListAppointment(user!.id!);
 
     listAppointment.value = response;
+  }
+
+  Future<void> cancelAppointment(int id) async {
+    final supabase = AppConfig.supabase.client;
+
+    try {
+      await supabase.from(AppConstant.tableAppointment).delete().eq(
+            'id',
+            id,
+          );
+      await getListAppointment();
+      Toast.showSuccessToast('Cancel Appointment Success');
+    } catch (e) {
+      Toast.showSuccessToast('Cancel Appointment Failed, please try again');
+    }
   }
 }

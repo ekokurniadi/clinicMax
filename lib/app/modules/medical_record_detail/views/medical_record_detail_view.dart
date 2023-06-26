@@ -63,51 +63,49 @@ class MedicalRecordDetailView extends GetView<MedicalRecordDetailController> {
                               child: ListView(
                                 shrinkWrap: true,
                                 children: [
-                                  GridView.builder(
+                                  ListView.separated(
                                     physics: ClampingScrollPhysics(),
+                                    separatorBuilder: (context, index) {
+                                      return Divider();
+                                    },
                                     shrinkWrap: true,
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      mainAxisSpacing: 4,
-                                      crossAxisSpacing: 4,
-                                    ),
                                     itemCount: controller.listAttachment.length,
                                     itemBuilder: (context, index) {
                                       return ZoomTapAnimation(
                                         onTap: () async {
                                           await controller.downloadAttachment(
+                                            id: controller
+                                                .listAttachment[index].id,
                                             url: controller
                                                 .listAttachment[index]
                                                 .attachment,
-                                            fileName:
-                                                'attachment-${index + 1}-${DateFormat('dd-MM-yyyy').format(
-                                              DateTime.parse(controller
-                                                  .medicalRecordModel
-                                                  .value
-                                                  .createdAt),
-                                            )}-${controller.user.value.name}.pdf',
+                                            fileName: controller
+                                                .listAttachment[index]
+                                                .attachment
+                                                .split('/')
+                                                .last,
                                           );
+                                          Navigator.pop(context);
                                         },
-                                        child: Container(
-                                          child: Card(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: Column(
+                                        child: Card(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                                  MainAxisAlignment.start,
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: [
-                                                Image.asset(
-                                                  'assets/images/pdf-icon.png',
-                                                  width: 24,
-                                                ),
-                                                const SizedBox(height: 16),
                                                 Text(
-                                                  'Attachment ${index + 1}',
+                                                  controller
+                                                      .listAttachment[index]
+                                                      .attachment
+                                                      .split('/')
+                                                      .last,
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                     fontSize: 12.sp,
@@ -115,6 +113,14 @@ class MedicalRecordDetailView extends GetView<MedicalRecordDetailController> {
                                                         .blackColor,
                                                   ),
                                                 ),
+                                                if (controller.listDownloaded
+                                                    .contains(controller
+                                                        .listAttachment[index]
+                                                        .id))
+                                                  Icon(
+                                                    Icons.check_circle,
+                                                    color: Colors.green,
+                                                  )
                                               ],
                                             ),
                                           ),
