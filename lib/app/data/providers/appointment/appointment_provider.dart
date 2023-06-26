@@ -48,7 +48,7 @@ class AppointmentProvider {
           await supabase.from(AppConstant.tableAppointment).select('*').match({
         'appointment_date': date,
         'user_id': id,
-      });
+      }).neq('status','Done');
 
       if (response.length > 0) {
         appointmentModel = AppointmentModel.fromJson(response[0]);
